@@ -1,165 +1,89 @@
 // src/js/my-library.js
+
+import { getUserLibrary, auth } from './auth.js';
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { fetchMovieDetails } from './movies-data.js';
 import { renderMovieCard, updateHeroWithMovie } from './ui-helpers.js';
+import { showLoader, hideLoader } from './loader.js';
 
-const initLibrary = async () => {
-  const grid = document.getElementById('library-grid');
+const initLibrary = () => {
+  const libraryGrid = document.getElementById('library-grid');
   const heroSection = document.getElementById('library-hero');
   const heroContent = document.getElementById('library-hero-content');
-  const genreContainer = document.getElementById('genre-filter-container');
-  const genreHeader = document.getElementById('genre-header');
-  const genreTextSpan = document.getElementById('selected-genre-text');
-  const genreList = document.getElementById('genre-list');
-  const loadMoreContainer = document.getElementById('load-more-container');
-  const loadMoreBtn = document.getElementById('load-more-btn');
-
-  if (!grid) return;
-
-  const storedIds = JSON.parse(localStorage.getItem('myLibrary') || '[]');
-  const numericIds = (Array.isArray(storedIds) ? storedIds : [])
-    .map((v) => Number(v))
-    .filter((v) => Number.isFinite(v) && v > 0);
-
-  if (!numericIds.length) {
-    grid.innerHTML = `
-      <div class="library-message">
-        <p style="font-size: 24px; font-weight: 500; margin-bottom: 10px;">OOPS...</p>
-        <p>Henüz bir film eklemediniz!</p>
-        <a href="/catalog.html" class="btn btn-primary" style="margin-top:20px; display:inline-block;">Kataloğa Git</a>
-      </div>`;
-    if (genreContainer) genreContainer.style.display = 'none';
-    if (loadMoreContainer) loadMoreContainer.classList.add('is-hidden');
-    return;
+  
+  // Boş mesaj elementi yoksa JS ile oluşturup ekleyelim
+  let emptyMsg = document.getElementById('empty-library-msg');
+  if (!emptyMsg && libraryGrid) {
+    emptyMsg = document.createElement('div');
+    emptyMsg.id = 'empty-library-msg';
+    emptyMsg.className = 'empty-library is-hidden';
+    emptyMsg.innerHTML = `
+      <p>OOPS...</p>
+      <p>You haven't added any movies yet.</p>
+      <a href="catalog.html" style="color:var(--primary-orange, orange); margin-top:15px; display:inline-block;">Go to Catalog</a>
+    `;
+    // Grid'in hemen öncesine ekle
+    libraryGrid.parentNode.insertBefore(emptyMsg, libraryGrid);
   }
 
-  const results = await Promise.allSettled(
-    numericIds.map((id) => fetchMovieDetails(id))
-  );
+  if (!libraryGrid) return;
 
-  const allMovies = [];
-  const successfulIds = [];
+  // --- LİSTEYİ YÜKLEME FONKSİYONU ---
+  async function loadLibraryMovies() {
+    showLoader();
+    libraryGrid.innerHTML = ''; // Temizle
+    if (emptyMsg) emptyMsg.classList.add('is-hidden');
 
-  results.forEach((r, idx) => {
-    const id = numericIds[idx];
-    if (r.status === 'fulfilled' && r.value) {
-      allMovies.push(r.value);
-      successfulIds.push(id);
-    }
-  });
+    try {
+      // 1. Film ID'lerini çek (Firebase veya LocalStorage)
+      const movieIds = await getUserLibrary();
 
-  localStorage.setItem('myLibrary', JSON.stringify(successfulIds));
-
-  if (allMovies.length > 0) {
-    await updateHeroWithMovie(allMovies[0].id, heroSection, heroContent);
-  }
-
-  // Tür Filtreleme
-  const availableGenres = new Map();
-  allMovies.forEach((movie) => {
-    if (movie.genres) {
-      movie.genres.forEach((g) => availableGenres.set(g.id, g.name));
-    }
-  });
-
-  if (genreList) {
-    const allItem = document.createElement('div');
-    allItem.className = 'genre-item active';
-    allItem.textContent = 'All Genres';
-    allItem.dataset.id = 'all';
-    genreList.appendChild(allItem);
-
-    availableGenres.forEach((name, id) => {
-      const item = document.createElement('div');
-      item.className = 'genre-item';
-      item.textContent = name;
-      item.dataset.id = id;
-      genreList.appendChild(item);
-    });
-  }
-
-  if (genreHeader) {
-    genreHeader.addEventListener('click', (e) => {
-      e.stopPropagation();
-      genreList.classList.toggle('is-hidden');
-      genreContainer.classList.toggle('is-open');
-    });
-  }
-
-  document.addEventListener('click', (e) => {
-    if (genreContainer && !genreContainer.contains(e.target)) {
-      genreList.classList.add('is-hidden');
-      genreContainer.classList.remove('is-open');
-    }
-  });
-
-  let currentGenreId = 'all';
-  let filteredMovies = [...allMovies];
-
-  if (genreList) {
-    genreList.addEventListener('click', (e) => {
-      if (e.target.classList.contains('genre-item')) {
-        currentGenreId = e.target.dataset.id;
-        const genreName = e.target.textContent;
-        if (genreTextSpan) genreTextSpan.textContent = genreName === 'All Genres' ? 'Genre' : genreName;
-
-        document.querySelectorAll('.genre-item').forEach((item) => item.classList.remove('active'));
-        e.target.classList.add('active');
-        genreList.classList.add('is-hidden');
-        genreContainer.classList.remove('is-open');
-        applyFilter();
+      // 2. Eğer liste boşsa
+      if (!movieIds || movieIds.length === 0) {
+        hideLoader();
+        if (emptyMsg) emptyMsg.classList.remove('is-hidden');
+        if (heroSection) heroSection.style.backgroundImage = 'none';
+        if (heroContent) heroContent.innerHTML = '<h1>Your Library is Empty</h1>';
+        return;
       }
-    });
-  }
 
-  let renderedCount = 0;
-  const PER_PAGE = 6;
+      // 3. ID'leri kullanarak film detaylarını API'den çek
+      const promises = movieIds.map(id => fetchMovieDetails(id));
+      const movies = await Promise.all(promises);
 
-  function applyFilter() {
-    if (currentGenreId === 'all') {
-      filteredMovies = [...allMovies];
-    } else {
-      filteredMovies = allMovies.filter((m) =>
-        m.genres.some((g) => g.id.toString() === currentGenreId.toString())
-      );
-    }
+      // 4. Filmleri Ekrana Bas (Hatalı/Silinmiş olanları filtrele)
+      const validMovies = movies.filter(m => m !== null);
+      
+      libraryGrid.innerHTML = validMovies.map(m => renderMovieCard(m)).join('');
 
-    renderedCount = 0;
-    grid.innerHTML = '';
+      // 5. İlk filmi Hero alanına koy
+      if (validMovies.length > 0 && heroSection) {
+        updateHeroWithMovie(validMovies[0].id, heroSection, heroContent);
+      }
 
-    if (filteredMovies.length === 0) {
-      grid.innerHTML = `<div class="library-message">Bu türde film bulunamadı.</div>`;
-      if (loadMoreContainer) loadMoreContainer.classList.add('is-hidden');
-    } else {
-      renderBatch();
+    } catch (error) {
+      console.error("Kütüphane yüklenirken hata:", error);
+      libraryGrid.innerHTML = '<p style="color:white; text-align:center;">Bir hata oluştu.</p>';
+    } finally {
+      hideLoader();
     }
   }
 
-  function renderBatch() {
-    const nextBatch = filteredMovies.slice(renderedCount, renderedCount + PER_PAGE);
-    const html = nextBatch.map((m) => renderMovieCard(m)).join('');
-    grid.insertAdjacentHTML('beforeend', html);
-    renderedCount += nextBatch.length;
-
-    if (renderedCount >= filteredMovies.length) {
-      if (loadMoreContainer) loadMoreContainer.classList.add('is-hidden');
-    } else {
-      if (loadMoreContainer) loadMoreContainer.classList.remove('is-hidden');
-    }
-  }
-
-  if (loadMoreBtn) {
-    loadMoreBtn.addEventListener('click', renderBatch);
-  }
-
-  renderBatch();
-
-  grid.addEventListener('click', (e) => {
+  // --- OTURUM DURUMUNU DİNLE ---
+  // Sayfa açıldığında Firebase'in durumunu bekliyoruz
+  onAuthStateChanged(auth, (user) => {
+    loadLibraryMovies();
+  });
+  
+  // Kartlara tıklayınca Hero güncelle
+  libraryGrid.addEventListener('click', (e) => {
     const card = e.target.closest('.movie-card');
-    if (card && card.dataset.id) {
+    if (card && card.dataset.id && heroSection) {
       updateHeroWithMovie(card.dataset.id, heroSection, heroContent);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   });
 };
 
+// Başlat
 initLibrary();

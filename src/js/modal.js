@@ -1,19 +1,12 @@
-// Gerekli modülleri import et
-import { fetchMovieDetails, getImageUrl } from './movies-data.js';
+// src/js/modal.js
 
-/**
- * Film detay modalının tüm işlevselliğini ayarlar.
- * @returns { {openModal: Function, closeModal: Function} }
- */
+import { fetchMovieDetails, getImageUrl, fetchMovieProviders } from './movies-data.js';
+// YENİ: auth.js'den veritabanı fonksiyonlarını çekiyoruz
+import { getUserLibrary, addToLibrary, removeFromLibrary } from './auth.js';
+
 export function setupModal() {
-  // === 1. DOM ELEMENTLERİNİ SEÇ ===
   const backdrop = document.querySelector('#movie-modal-backdrop');
-
-  // Modal bulunamazsa hata ver ve boş fonksiyonlar döndür
-  if (!backdrop) {
-    console.error("Modal backdrop '#movie-modal-backdrop' not found.");
-    return { openModal: () => {}, closeModal: () => {} };
-  }
+  if (!backdrop) return { openModal: () => {}, closeModal: () => {} };
 
   const closeBtn = backdrop.querySelector('#modal-close-btn');
   const poster = backdrop.querySelector('#modal-poster');
@@ -25,101 +18,171 @@ export function setupModal() {
   const description = backdrop.querySelector('#modal-description');
   const addBtn = backdrop.querySelector('#modal-add-btn');
 
-  // === 2. LOCALSTORAGE YARDIMCI FONKSİYONLARI ===
-  function getLibrary() {
-    return JSON.parse(localStorage.getItem('myLibrary')) || [];
-  }
+  // --- EKSTRA SEÇİCİLER ---
+  const providersContainer = backdrop.querySelector('#modal-providers-container');
+  const providersList = backdrop.querySelector('#modal-providers-list');
+  const watchLink = backdrop.querySelector('#modal-watch-link');
+  const googleBtn = backdrop.querySelector('#modal-google-btn');
 
-  function saveLibrary(list) {
-    localStorage.setItem('myLibrary', JSON.stringify(list));
-  }
+  // NOT: Eski getLibrary ve saveLibrary fonksiyonlarını sildik.
+  // Artık auth.js içindeki fonksiyonları kullanacağız.
 
-  // === 3. MODAL AÇMA FONKSİYONU ===
+  // === MODAL AÇMA FONKSİYONU ===
   async function openModal(movieId) {
-    // API'den film detaylarını çek
+    // 1. Film detaylarını çek
     const movie = await fetchMovieDetails(movieId);
-    if (!movie) return; // Film bulunamazsa açma
+    if (!movie) return;
 
-    // Modal içini film bilgileriyle doldur
+    // --- GOOGLE ARAMA BUTONU ---
+    if (googleBtn) {
+      googleBtn.onclick = () => {
+        const query = encodeURIComponent(`${movie.title} izle`); 
+        window.open(`https://www.google.com/search?q=${query}`, '_blank');
+      };
+    }
+
+    // 2. Platform bilgilerini çek
+    const providersData = await fetchMovieProviders(movieId);
+    
+    // Modal içini görsel ve metinle doldur
     if (poster) poster.src = getImageUrl(movie.poster_path);
     if (title) title.textContent = movie.title.toUpperCase();
     if (voteAvg) voteAvg.textContent = movie.vote_average.toFixed(1);
-    if (voteCount) voteCount.textContent = movie.vote_count; // HTML'deki '/' ayracı sabit
+    if (voteCount) voteCount.textContent = movie.vote_count;
     if (popularity) popularity.textContent = movie.popularity.toFixed(1);
-    if (genre) {
-      genre.textContent = movie.genres.map((g) => g.name).join(', ') || 'N/A';
-    }
-    if (description)
-      description.textContent = movie.overview || 'No description available.';
+    if (genre) genre.textContent = movie.genres.map((g) => g.name).join(', ') || 'N/A';
+    if (description) description.textContent = movie.overview || 'No description available.';
 
-    // Kütüphane butonunu ayarla
+    // --- PLATFORM MANTIĞI (NETFLIX, AMAZON VS.) ---
+    if (providersContainer && providersList) {
+      providersList.innerHTML = ''; // Temizle
+      providersContainer.classList.add('is-hidden'); // Gizle
+
+      const trData = providersData?.results?.TR; // Türkiye verisi
+
+      if (trData && trData.flatrate && trData.flatrate.length > 0) {
+        providersContainer.classList.remove('is-hidden');
+        
+        if (watchLink) watchLink.href = trData.link;
+
+        trData.flatrate.slice(0, 5).forEach(provider => {
+          const img = document.createElement('img');
+          img.src = `https://image.tmdb.org/t/p/original${provider.logo_path}`;
+          img.alt = provider.provider_name;
+          img.title = `Watch on ${provider.provider_name}`;
+          img.classList.add('provider-logo');
+          
+          // Platforma yönlendirme
+          img.onclick = () => {
+            const titleEncoded = encodeURIComponent(movie.title);
+            const pName = provider.provider_name.toLowerCase();
+            let targetUrl = '';
+
+            if (pName.includes('netflix')) {
+              targetUrl = `https://www.netflix.com/search?q=${titleEncoded}`;
+            } else if (pName.includes('amazon') || pName.includes('prime')) {
+              targetUrl = `https://www.primevideo.com/search/ref=atv_nb_sr?phrase=${titleEncoded}`;
+            } else if (pName.includes('disney')) {
+              targetUrl = `https://www.disneyplus.com/search?q=${titleEncoded}`;
+            } else if (pName.includes('apple')) {
+              targetUrl = `https://tv.apple.com/search?term=${titleEncoded}`;
+            } else if (pName.includes('blutv')) {
+              targetUrl = `https://www.blutv.com/arama?q=${titleEncoded}`;
+            } else if (pName.includes('mubi')) {
+              targetUrl = `https://mubi.com/tr/search/films?query=${titleEncoded}`;
+            } else {
+              targetUrl = trData.link; 
+            }
+            window.open(targetUrl, '_blank');
+          };
+          providersList.appendChild(img);
+        });
+      }
+    }
+
+    // --- KÜTÜPHANE BUTONU (FIREBASE ENTEGRASYONU) ---
     if (addBtn) {
-      const library = getLibrary();
-      const numericMovieId = Number(movie.id); // ID'yi sayıya çevir
+      const numericMovieId = Number(movie.id);
+      addBtn.dataset.id = numericMovieId;
+      
+      // Yükleniyor durumu
+      addBtn.textContent = "Checking...";
+      addBtn.disabled = true;
+      addBtn.classList.remove('btn-remove'); // Rengi sıfırla
 
-      // Film kütüphanede mi?
-      addBtn.textContent = library.includes(numericMovieId)
-        ? 'Remove from my library' // Varsa
-        : 'Add to my library'; // Yoksa
-      addBtn.dataset.id = numericMovieId; // Butona film ID'sini ekle
+      // Firebase'den veya LocalStorage'dan durumu kontrol et
+      getUserLibrary().then(library => {
+        const exists = library.includes(numericMovieId);
+        
+        if (exists) {
+          addBtn.textContent = 'Remove from my library';
+          addBtn.classList.add('btn-remove'); // Kırmızı yap (CSS varsa)
+        } else {
+          addBtn.textContent = 'Add to my library';
+          addBtn.classList.remove('btn-remove');
+        }
+        addBtn.disabled = false; // Butonu aç
+      });
     }
 
-    // Modal'ı görünür yap
     backdrop.classList.remove('is-hidden');
-    document.body.classList.add('modal-open'); // Arkaplan kaydırmayı durdur
+    document.body.classList.add('modal-open');
   }
 
-  // === 4. MODAL KAPATMA FONKSİYONU ===
   function closeModal() {
     backdrop.classList.add('is-hidden');
-    document.body.classList.remove('modal-open'); // Kaydırmayı tekrar aç
+    document.body.classList.remove('modal-open');
   }
 
-  // === 5. OLAY DİNLEYİCİLERİ (EVENT LISTENERS) ===
-
-  // Kapatma (X) butonu
+  // --- EVENT LISTENERS ---
   if (closeBtn) closeBtn.addEventListener('click', closeModal);
-
-  // Backdrop'a (dışarıya) tıklayınca kapat
+  
   backdrop.addEventListener('click', (e) => {
-    if (e.target === backdrop) {
-      closeModal();
-    }
+    if (e.target === backdrop) closeModal();
   });
-
-  // ESC tuşu ile kapat
+  
   window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && !backdrop.classList.contains('is-hidden')) {
-      closeModal();
-    }
+    if (e.key === 'Escape' && !backdrop.classList.contains('is-hidden')) closeModal();
   });
 
-  // "Add to my library" butonu
+  // --- KÜTÜPHANE EKLE/ÇIKAR TIKLAMA OLAYI ---
   if (addBtn) {
-    addBtn.addEventListener('click', () => {
+    // Not: addEventListener her açılışta birikmesin diye cloneNode yapılabilir 
+    // ama setupModal bir kere çalıştığı için sorun yok.
+    addBtn.addEventListener('click', async () => {
       const id = Number(addBtn.dataset.id);
       if (!id) return;
 
-      const library = getLibrary();
-      const idx = library.indexOf(id); // Filmin kütüphanedeki index'i
+      // Butonu kilitle ve kullanıcıya bilgi ver
+      addBtn.disabled = true;
+      const originalText = addBtn.textContent;
+      addBtn.textContent = "Processing...";
 
-      if (idx > -1) {
-        // Film varsa: çıkar
-        library.splice(idx, 1);
-        addBtn.textContent = 'Add to my library';
-      } else {
-        // Film yoksa: ekle
-        library.push(id);
-        addBtn.textContent = 'Remove from my library';
+      try {
+        // Güncel listeyi çek
+        const library = await getUserLibrary();
+        const exists = library.includes(id);
+
+        if (exists) {
+          // Varsa Sil
+          await removeFromLibrary(id);
+          addBtn.textContent = 'Add to my library';
+          addBtn.classList.remove('btn-remove');
+        } else {
+          // Yoksa Ekle
+          await addToLibrary(id);
+          addBtn.textContent = 'Remove from my library';
+          addBtn.classList.add('btn-remove');
+        }
+      } catch (err) {
+        console.error("Library Error:", err);
+        addBtn.textContent = originalText; // Hata olursa eski metne dön
+        alert("Bir hata oluştu. Giriş yapmamış olabilir misiniz?");
+      } finally {
+        addBtn.disabled = false; // Kilidi aç
       }
-      saveLibrary(library); // Değişikliği kaydet
-
-      // Not: Kütüphaneye ekledikten sonra yönlendirme kodu kaldırıldı.
-      // Bu, kullanıcının modalı kapatmadan başka filmlere bakmasına olanak tanır.
-      // Yönlendirme istenirse buraya eklenebilir.
     });
   }
 
-  // Dışarıya açılan fonksiyonları döndür
   return { openModal, closeModal };
 }

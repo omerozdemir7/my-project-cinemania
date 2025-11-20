@@ -63,3 +63,7 @@ export function getImageUrl(path) {
 export function getOriginalImageUrl(path) {
   return path ? `${IMG_ORIGINAL_URL}${path}` : 'https://via.placeholder.com/1920x1080?text=No+Image';
 }
+export async function fetchMovieProviders(id) {
+  // İzleme platformlarını çeker (Netflix, Amazon vb.)
+  return await fetchFromAPI(`/movie/${id}/watch/providers`);
+}

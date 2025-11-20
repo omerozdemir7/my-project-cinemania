@@ -97,7 +97,16 @@
   padding: 12px 32px;
   font-size: 14px;
 }
+.empty-library {
+  text-align: center;
+  color: #fff;
+  margin-top: 50px;
+  font-size: 1.5rem;
+}
 
+.empty-library.is-hidden {
+  display: none;
+}
 /* =============================
    LIGHT MODE (Library Özel)
 ============================== */

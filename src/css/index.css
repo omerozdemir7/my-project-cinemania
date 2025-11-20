@@ -256,4 +256,9 @@ body.light-mode .upcoming-info h3 {
 body.light-mode .about-text {
   color: #555;
 }
+body.dark-theme .btn-modal-google:hover {
+  background-color: #444;
+  color: #fff;
+  border-color: #666;
+}
 /* Hero'nun light modda değişmemesi kuralı common.css'e taşındı */

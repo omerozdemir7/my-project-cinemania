@@ -1,6 +1,7 @@
 // src/js/main.js
 
 // === 1. ORTAK MODÜLLERİ İÇERİ AL ===
+import './auth.js'; // <--- BU SATIR ÇOK ÖNEMLİ (En üstte olmalı)
 import { setupModal } from './modal.js';
 import { setupTeamModal } from './team-modal.js';
 import './mobile-nav.js';
@@ -24,23 +25,19 @@ document.addEventListener('DOMContentLoaded', () => {
     moduleName = 'index.js';
   }
 
-  // --- C. Navbar Aktif Link Ayarı (EKLENEN KISIM) ---
-  // Hangi sayfadaysak o linke 'active' sınıfını ekle
+  // --- C. Navbar Aktif Link Ayarı ---
   const navLinks = document.querySelectorAll('.nav-link');
 
   navLinks.forEach(link => {
-    link.classList.remove('active'); // Önce hepsini temizle
+    link.classList.remove('active');
     const href = link.getAttribute('href');
 
-    // 1. Home Kontrolü (Ana sayfa veya index.html)
     if ((path === '/' || path.includes('index.html')) && href.includes('index.html')) {
       link.classList.add('active');
     }
-    // 2. Catalog Kontrolü
     else if (path.includes('catalog') && href.includes('catalog')) {
       link.classList.add('active');
     }
-    // 3. Library Kontrolü
     else if (path.includes('library') && href.includes('library')) {
       link.classList.add('active');
     }

@@ -7,12 +7,14 @@
   position: relative;
   z-index: 1000; /* Mobil menüden yüksek olmalı */
   transition: background-color 0.3s;
+  
 }
 
 .header-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  
 }
 
 .logo {
@@ -45,6 +47,8 @@
   text-transform: uppercase;
   padding-bottom: 4px;
   border-bottom: 2px solid transparent;
+  position: relative;
+  left: 100px;
 }
 
 .nav-link:hover,
@@ -58,6 +62,8 @@
 .theme-switcher {
   position: relative;
   z-index: 10000; /* Mobil menü açıldığında bile üstte kalması için */
+  position: relative;
+  left: 100px;
 }
 .switch {
   --switch-w: 60px;

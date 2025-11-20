@@ -159,6 +159,48 @@
   background-color: var(--primary-orange);
   color: #000;
 }
+/* Modal içindeki platform alanı */
+.providers-container {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.providers-container.is-hidden {
+  display: none;
+}
+
+.providers-list {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.provider-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px; /* Hafif yuvarlak köşeler */
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.provider-logo:hover {
+  transform: scale(1.1); /* Üzerine gelince büyüsün */
+}
+
+.watch-link {
+  font-size: 12px;
+  color: var(--primary-orange, orange);
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 5px;
+}
+
+.watch-link:hover {
+  text-decoration: underline;
+}
 
 /* --- DETAILS MODAL RESPONSIVE (En alta ekle) --- */
 
@@ -179,7 +221,31 @@
     justify-content: center;
   }
 }
+.btn-modal-google {
+  flex: 1; /* Eşit genişlikte olsunlar */
+  padding: 12px 20px;
+  border: 1px solid #ccc; /* İnce çerçeve */
+  background-color: transparent;
+  color: inherit; /* Temadaki yazı rengini alsın */
+  border-radius: 20px;
+  font-weight: 500;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+}
 
+.btn-modal-google:hover {
+  background-color: var(--primary-orange);
+  color: var(--primary-black);
+  border-color: #bbb;
+}
+
+/* Eğer "Dark Mode" kullanıyorsan hover rengini ona göre ayarlayabilirsin */
+body.dark-theme .btn-modal-google:hover {
+  background-color: #444;
+  color: #fff;
+  border-color: #666;
+}
 @media (max-width: 480px) {
   .modal-window {
     width: 96%;

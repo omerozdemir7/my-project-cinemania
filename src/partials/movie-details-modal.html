@@ -1,6 +1,7 @@
 <!-- ================= MOVIE DETAILS MODAL (BAŞLANGIÇ) ================= -->
 <div class="modal-backdrop is-hidden" id="movie-modal-backdrop">
-  <div class="modal-window">
+  <!-- BURADAKİ DEĞİŞİKLİĞE DİKKAT: 'movie-modal-size' eklendi -->
+  <div class="modal-window movie-modal-size">
 
     <!-- Kapatma butonu -->
     <button type="button" class="modal-close-btn" id="modal-close-btn">&times;</button>
@@ -43,12 +44,26 @@
 
         <!-- ABOUT başlığı -->
         <h3 class="modal-about-title">ABOUT</h3>
-
-        <!-- Film açıklaması -->
         <p class="modal-description" id="modal-description"></p>
 
-        <!-- Buton -->
-        <button type="button" class="btn-modal-add" id="modal-add-btn">Add to my library</button>
+        <!-- Platformlar -->
+        <div id="modal-providers-container" class="providers-container is-hidden">
+          <h3 class="modal-about-title">WATCH ON</h3>
+          <div class="providers-list" id="modal-providers-list">
+          </div>
+          <a href="#" target="_blank" id="modal-watch-link" class="watch-link">View all options</a>
+        </div>
+
+        <!-- Butonlar -->
+        <div class="modal-btn-wrapper">
+          <button type="button" class="btn-modal-add" id="modal-add-btn">
+            Add to my library
+          </button>
+
+          <button type="button" class="btn-modal-google" id="modal-google-btn">
+            Search on Google
+          </button>
+        </div>
 
       </div>
     </div>
