@@ -1,13 +1,14 @@
 // src/js/auth.js
 
-// Firebase kütüphanelerini CDN üzerinden import ediyoruz (Tarayıcı uyumlu)
+// Firebase kütüphanelerini import ediyoruz
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { 
   getAuth, 
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
   signOut, 
-  onAuthStateChanged 
+  onAuthStateChanged,
+  sendPasswordResetEmail // <-- EKLENDI
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 import { 
@@ -31,15 +32,14 @@ const firebaseConfig = {
   measurementId: "G-XYT7Y5H7G9"
 };
 
-// Uygulamayı başlat
 const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app); // auth servisi
-const db = getFirestore(app);     // veritabanı servisi
+export const auth = getAuth(app);
+const db = getFirestore(app);
 
 // --- DOM ELEMENTLERİ ---
 const loginBtn = document.getElementById('btn-login');
-const logoutBtn = document.getElementById('btn-logout');
-const userEmailSpan = document.getElementById('user-email');
+// logoutBtn artık sadece tıklama işlevi için var, görünürlüğü dropdown yönetiyor
+const logoutBtn = document.getElementById('btn-logout'); 
 const modalBackdrop = document.getElementById('auth-modal-backdrop');
 const closeBtn = document.getElementById('auth-close-btn');
 const authForm = document.getElementById('auth-form');
@@ -48,71 +48,51 @@ const passInput = document.getElementById('auth-password');
 const authTitle = document.getElementById('auth-title');
 const submitBtn = document.getElementById('auth-submit-btn');
 const switchBtn = document.getElementById('auth-switch-btn');
+const accountContainer = document.getElementById('user-account-container'); 
+const dropdownEmailSpan = document.getElementById('dropdown-email');
+const changePasswordBtn = document.getElementById('btn-change-password');
 
 let isLoginMode = true;
 
-// --- VERİTABANI İŞLEMLERİ ---
-
-// 1. Kullanıcının Kütüphanesini Getir
-export async function getUserLibrary() {
-  const user = auth.currentUser;
-  
+// --- KULLANICI DURUMUNU TAKİP ET ---
+onAuthStateChanged(auth, (user) => {
   if (user) {
-    // Giriş yapmışsa Firebase'den çek
-    const userRef = doc(db, "users", user.uid);
-    try {
-      const docSnap = await getDoc(userRef);
-      if (docSnap.exists()) {
-        return docSnap.data().library || [];
+    // Giriş yapıldıysa: Login butonu GİZLE, Hesabım menüsü GÖSTER
+    if(loginBtn) loginBtn.classList.add('is-hidden');
+    if(accountContainer) accountContainer.classList.remove('is-hidden');
+    
+    if (dropdownEmailSpan) dropdownEmailSpan.textContent = user.email;
+  } else {
+    // Çıkış yapıldıysa: Login butonu GÖSTER, Hesabım menüsü GİZLE
+    if(loginBtn) loginBtn.classList.remove('is-hidden');
+    if(accountContainer) accountContainer.classList.add('is-hidden');
+    
+    if (dropdownEmailSpan) dropdownEmailSpan.textContent = '';
+  }
+});
+
+// --- ŞİFRE DEĞİŞTİRME ---
+if (changePasswordBtn) {
+  changePasswordBtn.onclick = async (e) => {
+    e.preventDefault();
+    const user = auth.currentUser;
+    if (user && user.email) {
+      const confirmReset = confirm(`${user.email} adresine şifre sıfırlama bağlantısı gönderilsin mi?`);
+      if (confirmReset) {
+        try {
+          await sendPasswordResetEmail(auth, user.email);
+          alert("E-posta gönderildi! Lütfen gelen kutunuzu kontrol edin.");
+        } catch (error) {
+          alert("Hata: " + error.message);
+        }
       }
-    } catch (error) {
-      console.error("Veri çekme hatası:", error);
     }
-    return [];
-  } else {
-    // Giriş yapmamışsa LocalStorage'dan çek
-    return JSON.parse(localStorage.getItem('myLibrary')) || [];
-  }
-}
-
-// 2. Kütüphaneye Ekle
-export async function addToLibrary(movieId) {
-  const user = auth.currentUser;
-  const id = Number(movieId);
-
-  if (user) {
-    const userRef = doc(db, "users", user.uid);
-    // Eğer döküman yoksa oluşturur (merge: true), varsa listeye ekler (arrayUnion)
-    await setDoc(userRef, { library: arrayUnion(id) }, { merge: true });
-  } else {
-    const list = JSON.parse(localStorage.getItem('myLibrary')) || [];
-    if (!list.includes(id)) {
-      list.push(id);
-      localStorage.setItem('myLibrary', JSON.stringify(list));
-    }
-  }
-}
-
-// 3. Kütüphaneden Çıkar
-export async function removeFromLibrary(movieId) {
-  const user = auth.currentUser;
-  const id = Number(movieId);
-
-  if (user) {
-    const userRef = doc(db, "users", user.uid);
-    await updateDoc(userRef, { library: arrayRemove(id) });
-  } else {
-    let list = JSON.parse(localStorage.getItem('myLibrary')) || [];
-    list = list.filter(item => item !== id);
-    localStorage.setItem('myLibrary', JSON.stringify(list));
-  }
+  };
 }
 
 // --- AUTH MODAL OLAYLARI ---
-
 if (loginBtn) loginBtn.onclick = () => modalBackdrop.classList.remove('is-hidden');
 if (closeBtn) closeBtn.onclick = () => modalBackdrop.classList.add('is-hidden');
-
 if (modalBackdrop) {
   modalBackdrop.onclick = (e) => {
     if(e.target === modalBackdrop) modalBackdrop.classList.add('is-hidden');
@@ -131,6 +111,7 @@ if (switchBtn) {
       submitBtn.textContent = "Sign Up";
       switchBtn.parentElement.innerHTML = `Already have an account? <span id="auth-switch-btn" style="color:orange;cursor:pointer">Login here</span>`;
     }
+    // Yeni oluşturulan span'a tekrar event listener ekle
     document.getElementById('auth-switch-btn').onclick = switchBtn.onclick; 
   };
 }
@@ -141,7 +122,6 @@ if (authForm) {
     const email = emailInput.value;
     const password = passInput.value;
     
-    // Butonu kilitle
     submitBtn.disabled = true;
     submitBtn.textContent = "Please wait...";
 
@@ -162,22 +142,54 @@ if (authForm) {
   };
 }
 
+// --- ÇIKIŞ YAP BUTONU ---
 if (logoutBtn) {
-  logoutBtn.onclick = async () => {
+  logoutBtn.onclick = async (e) => {
+    e.preventDefault(); // Link olduğu için sayfa yenilenmesini durdur (manuel yapacağız)
     await signOut(auth);
-    window.location.reload(); // Çıkış yapınca sayfayı yenile
+    window.location.reload(); 
   };
 }
 
-// Kullanıcı Durumunu Takip Et
-onAuthStateChanged(auth, (user) => {
+// --- VERİTABANI FONKSİYONLARI ---
+export async function getUserLibrary() {
+  const user = auth.currentUser;
   if (user) {
-    loginBtn.classList.add('is-hidden');
-    logoutBtn.classList.remove('is-hidden');
-    if (userEmailSpan) userEmailSpan.textContent = user.email;
+    const userRef = doc(db, "users", user.uid);
+    try {
+      const docSnap = await getDoc(userRef);
+      if (docSnap.exists()) return docSnap.data().library || [];
+    } catch (error) { console.error(error); }
+    return [];
   } else {
-    loginBtn.classList.remove('is-hidden');
-    logoutBtn.classList.add('is-hidden');
-    if (userEmailSpan) userEmailSpan.textContent = '';
+    return JSON.parse(localStorage.getItem('myLibrary')) || [];
   }
-});
+}
+
+export async function addToLibrary(movieId) {
+  const user = auth.currentUser;
+  const id = Number(movieId);
+  if (user) {
+    const userRef = doc(db, "users", user.uid);
+    await setDoc(userRef, { library: arrayUnion(id) }, { merge: true });
+  } else {
+    const list = JSON.parse(localStorage.getItem('myLibrary')) || [];
+    if (!list.includes(id)) {
+      list.push(id);
+      localStorage.setItem('myLibrary', JSON.stringify(list));
+    }
+  }
+}
+
+export async function removeFromLibrary(movieId) {
+  const user = auth.currentUser;
+  const id = Number(movieId);
+  if (user) {
+    const userRef = doc(db, "users", user.uid);
+    await updateDoc(userRef, { library: arrayRemove(id) });
+  } else {
+    let list = JSON.parse(localStorage.getItem('myLibrary')) || [];
+    list = list.filter(item => item !== id);
+    localStorage.setItem('myLibrary', JSON.stringify(list));
+  }
+}

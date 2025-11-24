@@ -4,35 +4,101 @@
       <img src="./img/logo.png" alt="Cinemania Logo" />
       <span>cprookie</span>
     </a>
+
     <nav class="main-nav">
       <button class="mobile-nav-close">&times;</button>
       <ul>
-        <li><a href="./index.html" class="nav-link">HOME</a></li>
-        <li><a href="./catalog.html" class="nav-link">CATALOG</a></li>
-        <li><a href="./my-library.html" class="nav-link">MY LIBRARY</a></li>
+        <li>
+          <a href="./index.html" class="nav-link" data-lang="nav_home">HOME</a>
+        </li>
+        <li>
+          <a href="./catalog.html" class="nav-link" data-lang="nav_catalog">CATALOG</a>
+        </li>
+        <li>
+          <a href="./my-library.html" class="nav-link" data-lang="nav_library">MY LIBRARY</a>
+        </li>
       </ul>
     </nav>
+
     <div class="auth-buttons">
-  <button id="btn-login" class="nav-link">Login / Register</button>
-  <button id="btn-logout" class="nav-link is-hidden">Logout</button>
-  <span id="user-email" class="user-info"></span> </div>
+      <button id="btn-login" class="nav-link" data-lang="nav_login">
+        Login / Register
+      </button>
+
+      <div id="user-account-container" class="user-dropdown-container is-hidden">
+        <button id="btn-account" class="nav-link account-btn">
+          <span data-lang="menu_account">My Account</span>
+          <i class="fas fa-chevron-down" style="margin-left: 5px; font-size: 0.8em"></i>
+        </button>
+
+        <div id="account-dropdown" class="dropdown-content">
+          <div class="dropdown-user-info">
+            <span id="dropdown-email">...</span>
+          </div>
+          <hr />
+
+          <div class="submenu-wrapper">
+            <button id="btn-languages" class="dropdown-item submenu-trigger">
+              <span><i class="fas fa-globe"></i>
+                <span data-lang="menu_languages">Languages</span></span>
+              <i class="fas fa-chevron-right arrow-icon"></i>
+            </button>
+
+            <div id="languages-list" class="submenu-content">
+              <a href="#" class="dropdown-item lang-opt" data-val="ku">Kurdish</a>
+              <a href="#" class="dropdown-item lang-opt" data-val="tr">Turkish</a>
+              <a href="#" class="dropdown-item lang-opt" data-val="fr">Français</a>
+              <a href="#" class="dropdown-item lang-opt" data-val="de">Deutsch</a>
+              <a href="#" class="dropdown-item lang-opt" data-val="en">English</a>
+            </div>
+
+            <a href="#" id="btn-change-password" class="dropdown-item">
+              <i class="fas fa-key"></i>
+              <span data-lang="menu_password">Change Password</span>
+            </a>
+            <a href="#" id="btn-logout" class="dropdown-item logout-item">
+              <i class="fas fa-sign-out-alt"></i>
+              <span data-lang="menu_logout">Logout</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div class="theme-switcher">
       <label class="switch">
         <input type="checkbox" id="theme-toggle-checkbox" />
         <span class="slider round">
-          <svg class="icon icon-sun"><use xlink:href="./img/symbol-defs.svg#icon-sun"></use></svg>
-          <svg class="icon-moon"><use xlink:href="./img/symbol-defs.svg#icon-moon"></use></svg>
+          <svg class="icon icon-sun">
+            <use xlink:href="./img/symbol-defs.svg#icon-sun"></use>
+          </svg>
+          <svg class="icon-moon">
+            <use xlink:href="./img/symbol-defs.svg#icon-moon"></use>
+          </svg>
           <span class="slider-circle-container">
-            <svg class="slider-circle-white"><use href="./img/symbol-defs.svg#icon-circle1"></use></svg>
-            <svg class="slider-circle-orange"><use href="./img/symbol-defs.svg#icon-circle1"></use></svg>
+            <svg class="slider-circle-white">
+              <use href="./img/symbol-defs.svg#icon-circle1"></use>
+            </svg>
+            <svg class="slider-circle-orange">
+              <use href="./img/symbol-defs.svg#icon-circle1"></use>
+            </svg>
           </span>
         </span>
       </label>
     </div>
-    <button class="mobile-menu-btn" style="background:none; border:none; color:#fff; font-size:24px; display:none;">
+
+    <button class="mobile-menu-btn" style="
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 24px;
+        display: none;
+      ">
       <i class="fas fa-bars"></i>
     </button>
   </div>
 </header>
+
 <div class="mobile-overlay"></div>
+
+<div id="google_translate_element"></div>

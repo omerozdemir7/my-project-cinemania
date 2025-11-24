@@ -1,11 +1,7 @@
-// Gerekli modülleri import et
+// trailer-modal.js
 import { fetchMovieVideos } from './movies-data.js';
 
-// === 1. TRAILER MODALINI AÇ (BAŞARILI) ===
-/**
- * YouTube videosunu modal içinde açar.
- * @param {string} videoKey - YouTube video ID'si (örn. "dQw4w9WgXcQ")
- */
+// === 1. TRAILER MODALINI AÇ ===
 export function openTrailerModal(videoKey) {
   const backdrop = document.getElementById('trailer-modal-backdrop');
   if (!backdrop) return;
@@ -13,23 +9,21 @@ export function openTrailerModal(videoKey) {
   const iframe = document.getElementById('trailer-iframe');
   const closeBtn = document.getElementById('trailer-modal-close-btn');
 
-  // Iframe'e YouTube linkini (otomatik oynatmalı) bas
   if (iframe) {
     iframe.src = `https://www.youtube.com/embed/${videoKey}?autoplay=1&rel=0&showinfo=0`;
   }
 
   backdrop.classList.remove('is-hidden');
-  document.body.classList.add('modal-open'); // Arkaplan kaydırmayı durdur
+  document.body.classList.add('modal-open');
 
-  // Kapatma olayları
   if (closeBtn) closeBtn.onclick = () => closeTrailerModal();
   backdrop.onclick = (e) => {
     if (e.target === backdrop) closeTrailerModal();
   };
   const onEsc = (e) => {
     if (e.key === 'Escape') {
-      closeTrailerModal(); // Fonksiyonu çağır
-      window.removeEventListener('keydown', onEsc); // Dinleyiciyi kaldır
+      closeTrailerModal();
+      window.removeEventListener('keydown', onEsc);
     }
   };
   window.addEventListener('keydown', onEsc);
@@ -42,33 +36,35 @@ export function closeTrailerModal() {
   if (!backdrop) return;
 
   backdrop.classList.add('is-hidden');
-  document.body.classList.remove('modal-open'); // Kaydırmayı aç
-  // Iframe'in src'sini temizle (video arka planda oynamasın)
+  document.body.classList.remove('modal-open');
   if (iframe) iframe.src = '';
 }
 
-// === 3. "WATCH TRAILER" TIKLAMA YÖNETİCİSİ ===
-/**
- * Bir film ID'si alır, trailer'ı arar ve ilgili modalı açar.
- * (ui-helpers.js tarafından çağrılır)
- * @param {number|string} movieId - Film ID'si
- */
+// === 3. "WATCH TRAILER" TIKLAMA YÖNETİCİSİ (GÜÇLENDİRİLMİŞ) ===
 export async function onWatchTrailerClick(movieId) {
   try {
     const data = await fetchMovieVideos(movieId);
-    // Videoları ara: Tipi "Trailer" ve sitesi "YouTube" olanı bul
-    const trailer = data?.results?.find(
+    
+    // 1. Önce "Trailer" tipindeki videoyu ara
+    let trailer = data?.results?.find(
       (v) => v.type === 'Trailer' && v.site === 'YouTube'
     );
 
+    // 2. Eğer Trailer yoksa, "Teaser" ara (Yedek Plan)
+    if (!trailer) {
+      trailer = data?.results?.find(
+        (v) => v.type === 'Teaser' && v.site === 'YouTube'
+      );
+    }
+
     if (trailer && trailer.key) {
-      openTrailerModal(trailer.key); // Bulunduysa aç
+      openTrailerModal(trailer.key);
     } else {
-      openTrailerErrorModal(); // Bulunamadıysa hata modalını aç
+      openTrailerErrorModal();
     }
   } catch (error) {
     console.error('Fragman aranırken hata:', error);
-    openTrailerErrorModal(); // API hatası olursa hata modalını aç
+    openTrailerErrorModal();
   }
 }
 
@@ -81,20 +77,21 @@ export function openTrailerErrorModal() {
   backdrop.classList.remove('is-hidden');
   document.body.classList.add('modal-open');
 
-  // Kapatma fonksiyonu (bu modal için özel)
   const closeErrorModal = () => {
     backdrop.classList.add('is-hidden');
     document.body.classList.remove('modal-open');
-    window.removeEventListener('keydown', onEsc);
   };
 
-  // Kapatma olayları
   if (closeBtn) closeBtn.onclick = closeErrorModal;
   backdrop.onclick = (e) => {
     if (e.target === backdrop) closeErrorModal();
   };
+  // ESC tuşu desteği
   const onEsc = (e) => {
-    if (e.key === 'Escape') closeErrorModal();
+      if (e.key === 'Escape') {
+          closeErrorModal();
+          window.removeEventListener('keydown', onEsc);
+      }
   };
   window.addEventListener('keydown', onEsc);
 }

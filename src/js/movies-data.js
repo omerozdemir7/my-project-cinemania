@@ -2,14 +2,19 @@
 
 const API_KEY = '362ee522f1af2dedac989b8df9cfb4eb';
 const BASE_URL = 'https://api.themoviedb.org/3';
-const IMG_URL = 'https://image.tmdb.org/t/p/w500'; // Kartlar için
-const IMG_ORIGINAL_URL = 'https://image.tmdb.org/t/p/original'; // Hero için
+const IMG_URL = 'https://image.tmdb.org/t/p/w500';
+const IMG_ORIGINAL_URL = 'https://image.tmdb.org/t/p/original';
 
-/* === GENEL FETCH FONKSİYONU === */
-async function fetchFromAPI(endpoint, params = {}) {
+/* === GENEL FETCH FONKSİYONU (GÜNCELLENDİ) === */
+// 'lang' parametresi eklendi. Varsayılan 'en-US', ama 'null' gönderilirse dil filtresi kalkar.
+async function fetchFromAPI(endpoint, params = {}, lang = 'en-US') {
   const url = new URL(`${BASE_URL}${endpoint}`);
   url.searchParams.append('api_key', API_KEY);
-  url.searchParams.append('language', 'en-US'); // İstersen 'tr-TR' yapabilirsin
+  
+  // Eğer lang null değilse ekle (null gelirse eklemiyoruz, böylece hepsi geliyor)
+  if (lang) {
+    url.searchParams.append('language', lang); 
+  }
 
   for (const key in params) {
     if (params[key]) url.searchParams.append(key, params[key]);
@@ -51,8 +56,9 @@ export async function fetchMovieDetails(id) {
   return await fetchFromAPI(`/movie/${id}`);
 }
 
+// === GÜNCELLENEN KISIM: Video çekerken dili 'null' yapıyoruz ===
 export async function fetchMovieVideos(id) {
-  return await fetchFromAPI(`/movie/${id}/videos`);
+  return await fetchFromAPI(`/movie/${id}/videos`, {}, null);
 }
 
 /* === GÖRSEL YARDIMCILARI === */
@@ -63,7 +69,7 @@ export function getImageUrl(path) {
 export function getOriginalImageUrl(path) {
   return path ? `${IMG_ORIGINAL_URL}${path}` : 'https://via.placeholder.com/1920x1080?text=No+Image';
 }
+
 export async function fetchMovieProviders(id) {
-  // İzleme platformlarını çeker (Netflix, Amazon vb.)
   return await fetchFromAPI(`/movie/${id}/watch/providers`);
 }

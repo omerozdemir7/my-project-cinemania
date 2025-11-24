@@ -117,7 +117,7 @@
 .movie-details-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
   margin-bottom: 30px;
 }
 
@@ -127,7 +127,7 @@
 }
 
 .detail-key {
-  width: 150px; /* Etiket genişliği sabit */
+  width: 180px; /* Etiket genişliği sabit */
   color: var(--text-grey);
   font-weight: 500;
   flex-shrink: 0;
@@ -137,10 +137,12 @@
 .detail-history {
   color: var(--primary-white);
   font-weight: 500;
+  
 }
 .detail-history {
   color: var(--primary-orange);
   text-transform: uppercase;
+  
 }
 
 .rating-badge {
@@ -150,6 +152,7 @@
   border-radius: 5px;
   font-weight: 700;
   font-size: 14px;
+  
 }
 
 /* ABOUT Kısmı */
