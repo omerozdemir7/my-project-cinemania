@@ -3,18 +3,17 @@
 ============================== */
 .site-header {
   background-color: var(--hero-color);
-  padding: 20px 0;
+  padding: 14px 0; /* Mobil için varsayılan padding */
   position: relative;
   z-index: 1000; /* Mobil menüden yüksek olmalı */
   transition: background-color 0.3s;
-  
 }
 
 .header-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  
+  gap: 8px; /* Mobil için varsayılan boşluk */
 }
 
 .logo {
@@ -34,6 +33,7 @@
   font-weight: 700;
   margin-left: 8px;
   transition: color 0.3s;
+  display: none; /* Mobil için varsayılan olarak gizli */
 }
 
 .main-nav ul {
@@ -48,7 +48,7 @@
   padding-bottom: 4px;
   border-bottom: 2px solid transparent;
   position: relative;
-  left: 100px;
+  /* Sol konumlandırma kaldırıldı */
 }
 
 .nav-link:hover,
@@ -62,8 +62,7 @@
 .theme-switcher {
   position: relative;
   z-index: 10000; /* Mobil menü açıldığında bile üstte kalması için */
-  position: relative;
-  left: 100px;
+  /* Sol konumlandırma kaldırıldı */
 }
 .switch {
   --switch-w: 60px;
@@ -75,6 +74,7 @@
   display: inline-block;
   width: var(--switch-w);
   height: var(--switch-h);
+  transform: scale(0.9); /* Mobil için biraz daha küçük */
 }
 .switch input {
   opacity: 0;
@@ -188,7 +188,7 @@ input:checked + .slider .slider-circle-container {
   display: none;
   position: absolute;
   top: 100%;
-  left: 50px;
+  right: 0; /* Sağa hizalandı */
   margin-top: 10px;
   background-color: #1f1f1f;
   min-width: 230px; /* Genişliği biraz artırdık */
@@ -429,26 +429,27 @@ body {
 #google_translate_element {
     display: none !important; 
 }
-/* --- HEADER RESPONSIVE (En alta ekle) --- */
+/* --- HEADER RESPONSIVE --- */
 
-@media (max-width: 768px) {
+/* Tablet ve üzeri */
+@media (min-width: 768px) {
   .site-header {
     padding: 18px 0;
   }
   .logo span {
-    display: none; /* Mobilde logo yazısını gizle, sadece ikon kalsın */
+    display: inline; /* Tablet ve üzerinde logo yazısını göster */
+  }
+  .switch {
+    transform: scale(1); /* Switch normal boyuta döner */
+  }
+  .header-container {
+    gap: 16px;
   }
 }
 
-@media (max-width: 480px) {
+/* Masaüstü ve üzeri */
+@media (min-width: 1280px) {
   .site-header {
-    padding: 14px 0;
-  }
-  .header-container {
-    gap: 8px;
-  }
-  /* Switch küçültme */
-  .switch {
-    transform: scale(0.8);
+    padding: 20px 0;
   }
 }

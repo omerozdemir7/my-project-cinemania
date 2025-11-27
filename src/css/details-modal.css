@@ -33,12 +33,14 @@
 .modal-window {
   position: relative;
   background-color: #111; /* Koyu tema arka planı */
-  width: 800px;
-  max-width: 100%;
+  width: 100%;
+  max-width: 500px; /* Mobil ve küçük tabletler için maksimum genişlik */
   border-radius: 16px;
-  padding: 40px;
+  padding: 20px 16px; /* Mobil için padding */
   box-shadow: 0px 0px 25px rgba(255, 107, 8, 0.4); /* Turuncu gölge */
   color: #fff;
+  max-height: 90vh; /* Ekran taşmasın */
+  overflow-y: auto; /* İçerik taşarsa scroll olsun */
   /* Animasyon */
   transform: scale(1);
   transition: transform 0.3s ease;
@@ -71,6 +73,8 @@
 .modal-content {
   display: flex;
   gap: 30px;
+  flex-direction: column; /* Mobil için varsayılan: alt alta */
+  align-items: center; /* Mobil için ortalı */
 }
 
 .modal-poster-wrapper {
@@ -78,19 +82,21 @@
 }
 
 .modal-poster {
-  width: 240px;
-  height: 360px;
+  width: 200px; /* Mobil için poster boyutu */
+  height: 300px;
   object-fit: cover;
   border-radius: 8px;
   display: block;
+  margin-bottom: 20px; /* Mobil için poster altı boşluk */
 }
 
 .modal-info {
   flex-grow: 1;
+  text-align: center; /* Mobil için ortalı */
 }
 
 .modal-title {
-  font-size: 30px;
+  font-size: 24px; /* Mobil için başlık boyutu */
   font-weight: 700;
   margin-bottom: 20px;
   text-transform: uppercase;
@@ -109,10 +115,11 @@
   display: flex;
   align-items: center;
   font-size: 16px;
+  justify-content: center; /* Mobil için ortalı */
 }
 
 .detail-label {
-  width: 140px;
+  width: 100px; /* Mobil için etiket genişliği */
   color: #8c8c8c;
 }
 
@@ -175,6 +182,7 @@
   flex-wrap: wrap;
   margin-top: 5px;
   margin-bottom: 5px;
+  justify-content: center; /* Mobil için ortala */
 }
 
 .provider-logo {
@@ -202,25 +210,6 @@
   text-decoration: underline;
 }
 
-/* --- DETAILS MODAL RESPONSIVE (En alta ekle) --- */
-
-@media (max-width: 768px) {
-  .modal-content {
-    flex-direction: column; /* Yan yana değil alt alta */
-    align-items: center;
-  }
-  .modal-poster {
-    width: 200px;
-    height: 300px;
-    margin-bottom: 20px;
-  }
-  .modal-info {
-    text-align: center;
-  }
-  .detail-row {
-    justify-content: center;
-  }
-}
 .btn-modal-google {
   flex: 1; /* Eşit genişlikte olsunlar */
   padding: 12px 20px;
@@ -246,17 +235,38 @@ body.dark-theme .btn-modal-google:hover {
   color: #fff;
   border-color: #666;
 }
-@media (max-width: 480px) {
+
+/* --- DETAILS MODAL RESPONSIVE --- */
+
+/* Tablet ve Masaüstü */
+@media (min-width: 768px) {
   .modal-window {
-    width: 96%;
-    padding: 20px 16px;
-    max-height: 85vh; /* Ekran taşmasın */
-    overflow-y: auto;
+    max-width: 800px;
+    padding: 40px;
+    overflow-y: visible; /* Scroll'a gerek yok */
+  }
+  .modal-content {
+    flex-direction: row; /* Yan yana */
+    align-items: normal; /* Hizalamayı sıfırla */
+  }
+  .modal-poster {
+    width: 240px;
+    height: 360px;
+    margin-bottom: 0;
+  }
+  .modal-info {
+    text-align: left; /* Sola hizala */
   }
   .modal-title {
-    font-size: 24px;
+    font-size: 30px;
+  }
+  .detail-row {
+    justify-content: flex-start; /* Sola hizala */
   }
   .detail-label {
-    width: 100px;
+    width: 140px;
+  }
+  .providers-list {
+    justify-content: flex-start; /* Sola hizala */
   }
 }

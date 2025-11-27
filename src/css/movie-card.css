@@ -3,9 +3,9 @@
 ============================== */
 .movie-grid-container {
   display: grid;
-  /* Masaüstünde 3 sütun */
-  grid-template-columns: repeat(3, 1fr);
-  gap: 30px;
+  /* Mobil (varsayılan): 1 Sütun */
+  grid-template-columns: 1fr;
+  gap: 18px; /* Mobil için boşluk */
 }
 
 .movie-card {
@@ -88,20 +88,27 @@
 }
 
 
-/* --- MOVIE CARD GRID RESPONSIVE (En alta ekle) --- */
+/* --- MOVIE CARD GRID RESPONSIVE --- */
 
-/* Tablet: 2 Sütun */
-@media (max-width: 768px) {
+/* Küçük Tablet: 2 Sütun */
+@media (min-width: 480px) {
   .movie-grid-container {
-    grid-template-columns: repeat(2, 1fr); 
+    grid-template-columns: repeat(2, 1fr);
     gap: 22px;
   }
 }
 
-/* Mobil: 1 Sütun */
-@media (max-width: 480px) {
+/* Tablet ve Küçük Masaüstü: 3 Sütun */
+@media (min-width: 768px) {
   .movie-grid-container {
-    grid-template-columns: 1fr;
-    gap: 18px;
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 30px;
+  }
+}
+
+/* Geniş Masaüstü: 4 Sütun */
+@media (min-width: 1280px) {
+  .movie-grid-container {
+    grid-template-columns: repeat(4, 1fr);
   }
 }

@@ -4,8 +4,8 @@
 
 /* .team-modal-window ekleyerek diğer dosyadaki .modal-window ayarını eziyoruz */
 .modal-window.team-modal-window {
-  max-width: 1100px; /* 800px sınırını kaldırıp genişletiyoruz */
-  width: 95%;        /* Sabit piksel yerine ekranın %95'ini kaplasın */
+  width: 95%; /* Mobil için varsayılan genişlik */
+  max-width: 600px; /* Mobil ve küçük tablet için maksimum genişlik */
   padding: 40px 20px;
   text-align: center;
 }
@@ -24,38 +24,14 @@
   margin-bottom: 30px;
 }
 
-/* --- Ekip Grid Yapısı (ZORLA YAN YANA) --- */
+/* --- Ekip Grid Yapısı --- */
 .team-list {
   display: grid;
-  /* Masaüstünde kesinlikle 4 eşit sütun oluştur.
-     auto-fit yerine bu komut, sığsa da sığmasa da yan yana zorlar.
-  */
-  grid-template-columns: repeat(4, 1fr); 
-  gap: 20px;
+  /* Mobil (varsayılan): 1 sütun */
+  grid-template-columns: 1fr;
+  gap: 30px;
   justify-content: center;
   align-items: start;
-}
-
-/* --- RESPONSIVE AYARLAR --- */
-
-/* Tablet (768px ve altı): 2 üstte, 2 altta */
-@media (max-width: 768px) {
-  .team-list {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 30px;
-  }
-  
-  /* Mobilde modal biraz daha daralabilir */
-  .modal-window.team-modal-window {
-    max-width: 600px; 
-  }
-}
-
-/* Telefon (480px ve altı): Hepsi alt alta */
-@media (max-width: 480px) {
-  .team-list {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* --- ÜYE KARTLARI --- */
@@ -66,7 +42,7 @@
   transition: transform 0.3s ease;
   padding: 10px;
   position: relative;
-  left: 400px;
+  /* 'left' kaldırıldı, grid zaten merkezliyor */
 }
 
 .team-member:hover {
@@ -122,3 +98,23 @@ body.light-mode .team-title { color: var(--primary-orange); }
 body.light-mode .member-name { color: var(--light-text); }
 body.light-mode .member-social a { color: var(--text-grey); }
 body.light-mode .member-social a:hover { color: var(--primary-orange); }
+
+/* --- RESPONSIVE AYARLAR --- */
+
+/* Tablet (768px ve üzeri): 2 sütun */
+@media (min-width: 768px) {
+  .team-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Masaüstü (1100px ve üzeri): 4 sütun */
+@media (min-width: 1100px) {
+  .modal-window.team-modal-window {
+    max-width: 1100px;
+  }
+  .team-list {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+}
