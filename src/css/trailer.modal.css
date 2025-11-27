@@ -5,7 +5,8 @@
 /* .modal-window sınıfının daraltıcı etkisini ezmek için 'trailer-modal-content'i kullanıyoruz */
 .modal-window.trailer-modal-content {
   width: 800px !important;   /* Genişliği zorla (Login modalından etkilenmesin) */
-  max-width: 95%;            /* Mobilde ekranı taşırmasın */
+  max-width: 95%; 
+           /* Mobilde ekranı taşırmasın */
   padding: 0;                /* Videonun kenarında boşluk olmasın */
   background-color: #000;    /* Siyah zemin */
   overflow: hidden;          /* Kenarları yuvarlatınca video taşmasın */
@@ -46,3 +47,21 @@
   
 }
 
+@media (max-width: 320px) {
+.modal-window.trailer-modal-content{
+height: 130px !important;
+}
+}
+
+
+@media (max-width: 768px) {
+.modal-window.trailer-modal-content{
+height: 230px !important;
+}
+}
+
+@media (max-width: 472px) {
+.modal-window.trailer-modal-content{
+height: 175px !important;
+}
+}

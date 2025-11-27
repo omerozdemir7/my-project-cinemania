@@ -1,19 +1,22 @@
-/* =============================
-   5. GENEL HERO YAPISI
-============================== */
+/* ==========================================================================
+   HERO SECTION (MOBILE-FIRST)
+   ========================================================================== */
+
+/* --- Base Hero Styles (Mobile) --- */
 .hero-section {
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  min-height: 60vh; /* Mobil için varsayılan yükseklik */
+  min-height: 60vh;
+  padding: 30px 3%;
   color: var(--text-color);
   text-align: left;
   background-color: var(--primary-black);
-  background-size: cover !important; /* Mobil için kaplama */
-  background-position: right center !important; /* Mobil için sağa hizalı */
-  padding: 30px 0; /* Mobil için dikey padding */
+  background-size: cover !important;
+  background-position: right center !important;
+  background-repeat: no-repeat;
 }
 
 .hero-container {
@@ -21,15 +24,14 @@
   max-width: 1280px;
   margin: 0 auto;
   position: relative;
-  z-index: 60; /* Overlay'in önünde */
+  z-index: 60;
 }
 
 .hero-content {
-  max-width: 92%; /* Mobil için genişlik */
+  max-width: 92%;
   color: var(--primary-white);
   position: relative;
-  z-index: 70; /* İçerik overlay'in üstünde olmalı */
-  right: 0; /* Mobil ve tablet için varsayılan konum */
+  z-index: 70;
   transition:
     right 360ms ease,
     max-width 360ms ease;
@@ -37,16 +39,16 @@
 
 .hero-content h1,
 .hero-title {
-  font-size: 32px; /* Mobil için varsayılan font boyutu */
+  font-size: 32px;
   font-weight: 700;
-  line-height: 1.15; /* Mobil için satır yüksekliği */
+  line-height: 1.15;
   margin-bottom: 24px;
   color: var(--primary-white);
 }
 
 .hero-content p,
 .hero-description {
-  font-size: 14px; /* Mobil için varsayılan font boyutu */
+  font-size: 14px;
   line-height: 1.6;
   color: #e0e0e0;
   max-width: 500px;
@@ -55,51 +57,57 @@
 
 .hero-buttons {
   display: flex;
-  gap: 12px; /* Mobil için boşluk */
-  flex-wrap: wrap; /* Mobil için düğmeler alt satıra kaysın */
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
+/* ==========================================================================
+   TABLET & DESKTOP STYLES
+   ========================================================================== */
 
-/* --- HERO RESPONSIVE --- */
-
-/* Tablet (768px ve üzeri) */
+/* --- Tablet Styles --- */
 @media (min-width: 768px) {
   .hero-section {
     min-height: 72vh;
-    background-size: contain !important; /* Tabletten itibaren orijinal boyut */
-    background-position: 80% center !important; /* Resmi biraz sola çek */
-    padding: 0; /* Dikey padding'i sıfırla */
+    padding: 0; /* Reset padding */
+    background-position: 80% center !important;
   }
   .hero-content {
     max-width: 62%;
+    right: 0; /* Reset right property from desktop */
   }
-  .hero-content h1, .hero-title {
+  .hero-content h1,
+  .hero-title {
     font-size: 48px;
-    line-height: 1.3; /* Satır yüksekliğini normale döndür */
+    line-height: 1.3;
   }
-  .hero-content p, .hero-description {
+  .hero-content p,
+  .hero-description {
     font-size: 15px;
   }
   .hero-buttons {
-    flex-wrap: nowrap; /* Düğmeleri yan yana getir */
+    flex-wrap: nowrap; /* Un-wrap buttons */
     gap: 16px;
   }
 }
 
-/* Masaüstü (1280px ve üzeri) */
-@media (min-width: 1280px) {
+/* --- Desktop Styles --- */
+@media (min-width: 1024px) {
   .hero-section {
     min-height: 90vh;
-    background-position: 100% center !important; /* Resmi tam sağa hizala */
+    background-size: contain;
+    background-position: 100% center;
   }
   .hero-content {
     max-width: 52%;
-    right: 100px; /* Sola kaydırma efektini uygula */
+    right: 100px; /* Re-apply desktop offset */
   }
-  .hero-content h1, .hero-title {
+  .hero-content h1,
+  .hero-title {
     font-size: 64px;
   }
-  .hero-content p, .hero-description {
+  .hero-content p,
+  .hero-description {
     font-size: 16px;
   }
 }

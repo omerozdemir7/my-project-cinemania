@@ -60,9 +60,9 @@ body.modal-open {
 }
 
 .container {
-  width: 100%; /* Mobil için tam genişlik */
+  max-width: 1280px;
   margin: 0 auto;
-  padding: 0 20px; /* Mobil için yan boşluklar */
+  padding: 0 20px;
 }
 
 a {
@@ -135,7 +135,11 @@ body.light-mode .site-header {
 }
 body.light-mode .logo span,
 body.light-mode .nav-link {
-  color: var(--light-text);
+  color: var(--light-text) !important;
+}
+
+body.light-mode .main-nav{
+color: #000;
 }
 body.light-mode .nav-link:hover,
 body.light-mode .nav-link.active {
@@ -305,19 +309,17 @@ body.light-mode .modal-close-btn:hover {
 }
 
 /* --- GLOBAL RESPONSIVE --- */
-
-/* Tablet (768px ve üzeri) */
 @media (min-width: 768px) {
   .container {
-    max-width: 768px;
     padding: 0 32px;
+    max-width: 768px;
   }
 }
 
-/* Desktop (1280px ve üzeri) */
+/* 3. Desktop (1280px ve üzeri) */
 @media (min-width: 1280px) {
   .container {
-    max-width: 1280px;
     padding: 0 20px;
+    max-width: 1280px;
   }
 }
