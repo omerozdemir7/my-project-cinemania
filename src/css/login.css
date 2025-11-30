@@ -31,6 +31,8 @@
   font-weight: 600;
   cursor: pointer;
   transition: transform 0.2s, background-color 0.2s;
+  position: relative;
+  right: 100px;
 }
 
 #btn-login:hover {
@@ -242,6 +244,13 @@
   .modal-poster-wrapper {
     height: 250px; /* Mobilde poster yüksekliği */
     flex: none;
+  }
+
+  #btn-login{
+  width: 100px;
+  height: 30px;
+  font-size: 10px;
+ 
   }
 }
 

@@ -384,6 +384,57 @@ font { background: none !important; box-shadow: none !important; }
 body { top: 0px !important; position: static !important; }
 .goog-logo-link, #goog-gt-tt, .goog-tooltip, .VIpgJd-ZVi9od-ORHb-OEVmcd, #google_translate_element { display: none !important; visibility: hidden !important; opacity: 0 !important; }
 .goog-te-gadget { color: transparent !important; font-size: 0 !important; }
+#languages-list {
+  max-height: 260px;       /* Ne kadar yüksek olsun? (ayarlayabilirsin) */
+  overflow-y: auto;        /* Scroll açılsın */
+  overflow-x: hidden;
+  scrollbar-width: thin;   /* Firefox */
+}
+
+/* Chrome & Edge özel scrollbar */
+#languages-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+#languages-list::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 10px;
+}
+
+#languages-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.flag-icon {
+  width: 20px;
+  height: 14px;
+  border-radius: 3px;
+  margin-right: 10px;
+  object-fit: cover;
+}
+.lang-opt {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+}
+.lang-icon:hover {
+  
+  color: var(--primary-orange);
+  
+}
+
+
+/*
+.lang-icon {
+  font-size: 14px;
+  color: var(--primary-orange);
+  margin-right: 8px;
+}
+.lang-opt {
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+}
+*/
 
 /* =============================
    LIGHT MODE STYLES

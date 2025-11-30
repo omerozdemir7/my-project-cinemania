@@ -17,9 +17,13 @@ const addGoogleScript = () => {
 };
 
 window.googleTranslateElementInit = function() {
+
+  // HTML'deki bütün dilleri otomatik al
+  const langs = [...document.querySelectorAll('.lang-opt')].map(el => el.dataset.val);
+
   new google.translate.TranslateElement({
-    pageLanguage: 'en', // <--- BURASI ARTIK 'en' (İngilizce)
-    includedLanguages: 'tr,en,fr,de,ku', 
+    pageLanguage: 'en',
+    includedLanguages: langs.join(','), 
     autoDisplay: false
   }, 'google_translate_element');
 };
@@ -114,4 +118,20 @@ document.addEventListener('click', (e) => {
       if (langBtnRef) langBtnRef.classList.remove('open');
     }
   }
+});
+
+// === 5. TÜM DİL SEÇENEKLERİNE OTOMATİK İKON EKLEME ===
+document.addEventListener("DOMContentLoaded", () => {
+  const langItems = document.querySelectorAll('.lang-opt');
+
+  langItems.forEach(item => {
+    // Eğer daha önce eklenmişse tekrar ekleme
+    if (item.querySelector('.lang-icon')) return;
+
+    const icon = document.createElement("i");
+    icon.classList.add("fas", "fa-language", "lang-icon");
+
+    // Iconu en başa koy
+    item.prepend(icon);
+  });
 });
