@@ -158,6 +158,23 @@ body.menu-open footer {
   stroke: var(--primary-white);
   z-index: 1;
 }
+.slider-circle-orange {
+  position: absolute;
+  width: 5px;
+  height: 30px;
+  left: 15px;
+  top: -4px;
+  stroke: #ff7a00;
+  fill: none;
+  transform-origin: center;
+  transition: all 0.4s ease;
+  transform: rotate(0deg);
+}
+input:checked + .slider .slider-circle-orange {
+  left: 4px;
+  top: -4px;
+  transform: rotate(180deg);
+} 
 .slider .icon-moon { left: 6px; stroke-width: 2.3; }
 .slider .icon-sun { right: 6px; stroke-width: 2.5; }
 .slider-circle-container {
