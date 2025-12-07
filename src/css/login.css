@@ -1,5 +1,3 @@
-
-
 /* Navbar Sağ Taraf: Auth Butonları */
 .auth-buttons {
   display: flex;
@@ -149,7 +147,7 @@
 }
 
 #auth-form input:focus {
-  background-color: #444;
+  background-color: #ffffff;
   border-bottom: 2px solid var(--primary-color);
 }
 
