@@ -14,7 +14,7 @@
   color: var(--text-color);
   text-align: left;
   background-color: var(--primary-black);
-  background-size: cover !important;
+  background-size: cover!important;
   background-position: right center !important;
   background-repeat: no-repeat;
 }

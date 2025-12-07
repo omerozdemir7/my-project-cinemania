@@ -1,25 +1,17 @@
-import { defineConfig } from "vite";
-import { glob } from "glob";
-import injectHTML from "vite-plugin-html-inject";
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
-export default defineConfig(({ command }) => {
-  return {
-    // ... diğer ayarların ...
-    
-    // BURAYI EKLE: GitHub Repo adını buraya yaz
-    base: "/my-project-cinemania/", 
-
-    root: "src", 
-    build: {
-      outDir: "../dist", 
-      emptyOutDir: true,
-      sourcemap: true,
-      rollupOptions: {
-        input: glob.sync("./src/*.html"),
-      },
-    },
-    plugins: [
-      injectHTML(),
-    ],
-  };
+export default defineConfig({
+  plugins: [react()],
+  cacheDir: '.vite-cache',
+  base: '/my-project-cinemania/',
+  build: {
+    outDir: 'dist',
+    emptyOutDir: true,
+    sourcemap: true,
+  },
+  server: {
+    port: 3000,
+    open: true
+  }
 });

@@ -1,0 +1,72 @@
+// src/utils/moviesApi.js
+
+const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
+const BASE_URL = 'https://api.themoviedb.org/3';
+const IMG_URL = 'https://image.tmdb.org/t/p/w500';
+const IMG_ORIGINAL_URL = 'https://image.tmdb.org/t/p/original';
+
+async function fetchFromAPI(endpoint, params = {}, lang = 'en-US') {
+  const url = new URL(`${BASE_URL}${endpoint}`);
+  url.searchParams.append('api_key', API_KEY);
+  
+  if (lang) {
+    url.searchParams.append('language', lang); 
+  }
+
+  for (const key in params) {
+    if (params[key]) url.searchParams.append(key, params[key]);
+  }
+
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`API Error: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error('API Request Failed:', err);
+    return null;
+  }
+}
+
+export async function fetchPopularMovies(page = 1) {
+  return await fetchFromAPI('/movie/popular', { page });
+}
+
+export async function fetchTrendingMovies(period = 'week', page = 1) {
+  return await fetchFromAPI(`/trending/movie/${period}`, { page });
+}
+
+export async function fetchUpcomingMovies(page = 1) {
+  return await fetchFromAPI('/movie/upcoming', { page, region: 'US' });
+}
+
+export async function searchMovies(query, page = 1, year = '') {
+  return await fetchFromAPI('/search/movie', {
+    query,
+    page,
+    primary_release_year: year,
+  });
+}
+
+export async function fetchMovieDetails(id) {
+  return await fetchFromAPI(`/movie/${id}`);
+}
+
+export async function fetchMovieVideos(id) {
+  return await fetchFromAPI(`/movie/${id}/videos`, {}, null);
+}
+
+export function getImageUrl(path) {
+  return path ? `${IMG_URL}${path}` : 'https://via.placeholder.com/500x750?text=No+Poster';
+}
+
+export function getOriginalImageUrl(path) {
+  return path ? `${IMG_ORIGINAL_URL}${path}` : 'https://via.placeholder.com/1920x1080?text=No+Image';
+}
+
+export function getBackdropUrl(path) {
+  return path ? `https://image.tmdb.org/t/p/w1280${path}` : '';
+}
+
+export async function fetchMovieProviders(id) {
+  return await fetchFromAPI(`/movie/${id}/watch/providers`);
+}

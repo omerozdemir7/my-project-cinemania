@@ -52,9 +52,11 @@
 }
 
 #btn-logout:hover {
-  border-color: var(--text-white);
-  background: rgba(255,255,255,0.1);
+  background-color: red;
+  border-color: red;
+  color: #fff;
 }
+
 
 /* =========================================
    3. GENEL MODAL YAPISI (Tüm Modallar İçin)
