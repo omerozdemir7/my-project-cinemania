@@ -1,3 +1,5 @@
+
+
 import {
   require_react
 } from "./chunk-6VPNIYGA.js";
@@ -5,13 +7,14 @@ import {
   __commonJS
 } from "./chunk-5WRI5ZAA.js";
 
-// node_modules/react-dom/cjs/react-dom.development.js
 var require_react_dom_development = __commonJS({
   "node_modules/react-dom/cjs/react-dom.development.js"(exports) {
     "use strict";
     (function() {
+
       function noop() {
       }
+
       function testStringCoercion(value) {
         return "" + value;
       }
@@ -35,17 +38,21 @@ var require_react_dom_development = __commonJS({
           implementation
         };
       }
+
       function getCrossOriginStringAs(as, input) {
         if ("font" === as) return "";
         if ("string" === typeof input)
           return "use-credentials" === input ? input : "";
       }
+
       function getValueDescriptorExpectingObjectForWarning(thing) {
         return null === thing ? "`null`" : void 0 === thing ? "`undefined`" : "" === thing ? "an empty string" : 'something with type "' + typeof thing + '"';
       }
+
       function getValueDescriptorExpectingEnumForWarning(thing) {
         return null === thing ? "`null`" : void 0 === thing ? "`undefined`" : "" === thing ? "an empty string" : "string" === typeof thing ? JSON.stringify(thing) : "number" === typeof thing ? "`" + thing + "`" : 'something with type "' + typeof thing + '"';
       }
+
       function resolveDispatcher() {
         var dispatcher = ReactSharedInternals.H;
         null === dispatcher && console.error(
@@ -249,7 +256,6 @@ var require_react_dom_development = __commonJS({
   }
 });
 
-// node_modules/react-dom/index.js
 var require_react_dom = __commonJS({
   "node_modules/react-dom/index.js"(exports, module) {
     if (false) {
@@ -264,4 +270,3 @@ var require_react_dom = __commonJS({
 export {
   require_react_dom
 };
-//# sourceMappingURL=chunk-Z3CYZJOA.js.map

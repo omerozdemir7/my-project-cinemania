@@ -1,7 +1,7 @@
-// node_modules/@firebase/util/dist/postinstall.mjs
+
+
 var getDefaultsFromPostinstall = () => void 0;
 
-// node_modules/@firebase/util/dist/index.esm.js
 var stringToByteArray$1 = function(str) {
   const out = [];
   let p = 0;
@@ -40,6 +40,7 @@ var byteArrayToString = function(bytes) {
       const c2 = bytes[pos++];
       const c3 = bytes[pos++];
       const c4 = bytes[pos++];
+
       const u = ((c1 & 7) << 18 | (c2 & 63) << 12 | (c3 & 63) << 6 | c4 & 63) - 65536;
       out[c++] = String.fromCharCode(55296 + (u >> 10));
       out[c++] = String.fromCharCode(56320 + (u & 1023));
@@ -52,58 +53,27 @@ var byteArrayToString = function(bytes) {
   return out.join("");
 };
 var base64 = {
-  /**
-   * Maps bytes to characters.
-   */
+  
   byteToCharMap_: null,
-  /**
-   * Maps characters to bytes.
-   */
+  
   charToByteMap_: null,
-  /**
-   * Maps bytes to websafe characters.
-   * @private
-   */
+  
   byteToCharMapWebSafe_: null,
-  /**
-   * Maps websafe characters to bytes.
-   * @private
-   */
+  
   charToByteMapWebSafe_: null,
-  /**
-   * Our default alphabet, shared between
-   * ENCODED_VALS and ENCODED_VALS_WEBSAFE
-   */
+  
   ENCODED_VALS_BASE: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
-  /**
-   * Our default alphabet. Value 64 (=) is special; it means "nothing."
-   */
+  
   get ENCODED_VALS() {
     return this.ENCODED_VALS_BASE + "+/=";
   },
-  /**
-   * Our websafe alphabet.
-   */
+  
   get ENCODED_VALS_WEBSAFE() {
     return this.ENCODED_VALS_BASE + "-_.";
   },
-  /**
-   * Whether this browser supports the atob and btoa functions. This extension
-   * started at Mozilla but is now implemented by many browsers. We use the
-   * ASSUME_* variables to avoid pulling in the full useragent detection library
-   * but still allowing the standard per-browser compilations.
-   *
-   */
+  
   HAS_NATIVE_SUPPORT: typeof atob === "function",
-  /**
-   * Base64-encode an array of bytes.
-   *
-   * @param input An array of bytes (numbers with
-   *     value in [0, 255]) to encode.
-   * @param webSafe Boolean indicating we should use the
-   *     alternative alphabet.
-   * @return The base64 encoded string.
-   */
+  
   encodeByteArray(input, webSafe) {
     if (!Array.isArray(input)) {
       throw Error("encodeByteArray takes an array as a parameter");
@@ -118,7 +88,9 @@ var base64 = {
       const haveByte3 = i + 2 < input.length;
       const byte3 = haveByte3 ? input[i + 2] : 0;
       const outByte1 = byte1 >> 2;
+
       const outByte2 = (byte1 & 3) << 4 | byte2 >> 4;
+
       let outByte3 = (byte2 & 15) << 2 | byte3 >> 6;
       let outByte4 = byte3 & 63;
       if (!haveByte3) {
@@ -131,49 +103,21 @@ var base64 = {
     }
     return output.join("");
   },
-  /**
-   * Base64-encode a string.
-   *
-   * @param input A string to encode.
-   * @param webSafe If true, we should use the
-   *     alternative alphabet.
-   * @return The base64 encoded string.
-   */
+  
   encodeString(input, webSafe) {
     if (this.HAS_NATIVE_SUPPORT && !webSafe) {
       return btoa(input);
     }
     return this.encodeByteArray(stringToByteArray$1(input), webSafe);
   },
-  /**
-   * Base64-decode a string.
-   *
-   * @param input to decode.
-   * @param webSafe True if we should use the
-   *     alternative alphabet.
-   * @return string representing the decoded value.
-   */
+  
   decodeString(input, webSafe) {
     if (this.HAS_NATIVE_SUPPORT && !webSafe) {
       return atob(input);
     }
     return byteArrayToString(this.decodeStringToByteArray(input, webSafe));
   },
-  /**
-   * Base64-decode a string.
-   *
-   * In base-64 decoding, groups of four characters are converted into three
-   * bytes.  If the encoder did not apply padding, the input length may not
-   * be a multiple of 4.
-   *
-   * In this case, the last group will have fewer than 4 characters, and
-   * padding will be inferred.  If the group has one or two characters, it decodes
-   * to one byte.  If the group has three characters, it decodes to two bytes.
-   *
-   * @param input Input to decode.
-   * @param webSafe True if we should use the web-safe alphabet.
-   * @return bytes representing the decoded value.
-   */
+  
   decodeStringToByteArray(input, webSafe) {
     this.init_();
     const charToByteMap = webSafe ? this.charToByteMapWebSafe_ : this.charToByteMap_;
@@ -205,11 +149,7 @@ var base64 = {
     }
     return output;
   },
-  /**
-   * Lazy static initialization function. Called before
-   * accessing any of the static map variables.
-   * @private
-   */
+  
   init_() {
     if (!this.byteToCharMap_) {
       this.byteToCharMap_ = {};
@@ -250,6 +190,7 @@ var base64Decode = function(str) {
   }
   return null;
 };
+
 function getGlobal() {
   if (typeof self !== "undefined") {
     return self;
@@ -262,7 +203,9 @@ function getGlobal() {
   }
   throw new Error("Unable to locate global object.");
 }
+
 var getDefaultsFromGlobal = () => getGlobal().__FIREBASE_DEFAULTS__;
+
 var getDefaultsFromEnvVariable = () => {
   if (typeof process === "undefined" || typeof process.env === "undefined") {
     return;
@@ -272,6 +215,7 @@ var getDefaultsFromEnvVariable = () => {
     return JSON.parse(defaultsJsonString);
   }
 };
+
 var getDefaultsFromCookie = () => {
   if (typeof document === "undefined") {
     return;
@@ -285,6 +229,7 @@ var getDefaultsFromCookie = () => {
   const decoded = match && base64Decode(match[1]);
   return decoded && JSON.parse(decoded);
 };
+
 var getDefaults = () => {
   try {
     return getDefaultsFromPostinstall() || getDefaultsFromGlobal() || getDefaultsFromEnvVariable() || getDefaultsFromCookie();
@@ -293,7 +238,9 @@ var getDefaults = () => {
     return;
   }
 };
+
 var getDefaultEmulatorHost = (productName) => getDefaults()?.emulatorHosts?.[productName];
+
 var getDefaultEmulatorHostnameAndPort = (productName) => {
   const host = getDefaultEmulatorHost(productName);
   if (!host) {
@@ -310,7 +257,9 @@ var getDefaultEmulatorHostnameAndPort = (productName) => {
     return [host.substring(0, separatorIndex), port];
   }
 };
+
 var getDefaultAppConfig = () => getDefaults()?.config;
+
 var getExperimentalSetting = (name2) => getDefaults()?.[`_${name2}`];
 var Deferred = class {
   constructor() {
@@ -323,11 +272,7 @@ var Deferred = class {
       this.reject = reject;
     });
   }
-  /**
-   * Our API internals are not promisified and cannot because our callback APIs have subtle expectations around
-   * invoking promises inline, which Promises are forbidden to do. This method accepts an optional node-style callback
-   * and returns a node-style callback which will resolve or reject the Deferred's promise.
-   */
+  
   wrapCallback(callback) {
     return (error, value) => {
       if (error) {
@@ -347,6 +292,7 @@ var Deferred = class {
     };
   }
 };
+
 function isCloudWorkstation(url) {
   try {
     const host = url.startsWith("http://") || url.startsWith("https://") ? new URL(url).hostname : url;
@@ -361,6 +307,7 @@ async function pingServer(endpoint) {
   });
   return result.ok;
 }
+
 function createMockUserToken(token, projectId) {
   if (token.uid) {
     throw new Error('The "uid" field is no longer supported by mockUserToken. Please use "sub" instead for Firebase Auth User ID.');
@@ -376,7 +323,7 @@ function createMockUserToken(token, projectId) {
     throw new Error("mockUserToken must contain 'sub' or 'user_id' field!");
   }
   const payload = {
-    // Set all required fields to decent defaults
+   
     iss: `https://securetoken.google.com/${project}`,
     aud: project,
     iat,
@@ -388,7 +335,7 @@ function createMockUserToken(token, projectId) {
       sign_in_provider: "custom",
       identities: {}
     },
-    // Override with user options
+   
     ...token
   };
   const signature = "";
@@ -399,6 +346,7 @@ function createMockUserToken(token, projectId) {
   ].join(".");
 }
 var emulatorStatus = {};
+
 function getEmulatorSummary() {
   const summary = {
     prod: [],
@@ -413,6 +361,7 @@ function getEmulatorSummary() {
   }
   return summary;
 }
+
 function getOrCreateEl(id) {
   let parentDiv = document.getElementById(id);
   let created = false;
@@ -424,24 +373,28 @@ function getOrCreateEl(id) {
   return { created, element: parentDiv };
 }
 var previouslyDismissed = false;
+
 function updateEmulatorBanner(name2, isRunningEmulator) {
-  if (typeof window === "undefined" || typeof document === "undefined" || !isCloudWorkstation(window.location.host) || emulatorStatus[name2] === isRunningEmulator || emulatorStatus[name2] || // If already set to use emulator, can't go back to prod.
+  if (typeof window === "undefined" || typeof document === "undefined" || !isCloudWorkstation(window.location.host) || emulatorStatus[name2] === isRunningEmulator || emulatorStatus[name2] ||
   previouslyDismissed) {
     return;
   }
   emulatorStatus[name2] = isRunningEmulator;
+
   function prefixedId(id) {
     return `__firebase__banner__${id}`;
   }
   const bannerId = "__firebase__banner";
   const summary = getEmulatorSummary();
   const showError = summary.prod.length > 0;
+
   function tearDown() {
     const element = document.getElementById(bannerId);
     if (element) {
       element.remove();
     }
   }
+
   function setupBannerStyles(bannerEl) {
     bannerEl.style.display = "flex";
     bannerEl.style.background = "#7faaf0";
@@ -452,6 +405,7 @@ function updateEmulatorBanner(name2, isRunningEmulator) {
     bannerEl.style.borderRadius = "5px";
     bannerEl.style.alignItems = "center";
   }
+
   function setupIconStyles(prependIcon, iconId) {
     prependIcon.setAttribute("width", "24");
     prependIcon.setAttribute("id", iconId);
@@ -460,6 +414,7 @@ function updateEmulatorBanner(name2, isRunningEmulator) {
     prependIcon.setAttribute("fill", "none");
     prependIcon.style.marginLeft = "-6px";
   }
+
   function setupCloseBtn() {
     const closeBtn = document.createElement("span");
     closeBtn.style.cursor = "pointer";
@@ -472,6 +427,7 @@ function updateEmulatorBanner(name2, isRunningEmulator) {
     };
     return closeBtn;
   }
+
   function setupLinkStyles(learnMoreLink, learnMoreId) {
     learnMoreLink.setAttribute("id", learnMoreId);
     learnMoreLink.innerText = "Learn more";
@@ -480,6 +436,7 @@ function updateEmulatorBanner(name2, isRunningEmulator) {
     learnMoreLink.style.paddingLeft = "5px";
     learnMoreLink.style.textDecoration = "underline";
   }
+
   function setupDom() {
     const banner = getOrCreateEl(bannerId);
     const firebaseTextId = prefixedId("text");
@@ -526,6 +483,7 @@ function updateEmulatorBanner(name2, isRunningEmulator) {
     setupDom();
   }
 }
+
 function getUA() {
   if (typeof navigator !== "undefined" && typeof navigator["userAgent"] === "string") {
     return navigator["userAgent"];
@@ -533,11 +491,13 @@ function getUA() {
     return "";
   }
 }
+
 function isMobileCordova() {
-  return typeof window !== "undefined" && // @ts-ignore Setting up an broadly applicable index signature for Window
-  // just to deal with this case would probably be a bad idea.
+  return typeof window !== "undefined" &&
+ 
   !!(window["cordova"] || window["phonegap"] || window["PhoneGap"]) && /ios|iphone|ipod|ipad|android|blackberry|iemobile/i.test(getUA());
 }
+
 function isNode() {
   const forceEnvironment = getDefaults()?.forceEnvironment;
   if (forceEnvironment === "node") {
@@ -551,32 +511,41 @@ function isNode() {
     return false;
   }
 }
+
 function isBrowser() {
   return typeof window !== "undefined" || isWebWorker();
 }
+
 function isWebWorker() {
   return typeof WorkerGlobalScope !== "undefined" && typeof self !== "undefined" && self instanceof WorkerGlobalScope;
 }
+
 function isCloudflareWorker() {
   return typeof navigator !== "undefined" && navigator.userAgent === "Cloudflare-Workers";
 }
+
 function isBrowserExtension() {
   const runtime = typeof chrome === "object" ? chrome.runtime : typeof browser === "object" ? browser.runtime : void 0;
   return typeof runtime === "object" && runtime.id !== void 0;
 }
+
 function isReactNative() {
   return typeof navigator === "object" && navigator["product"] === "ReactNative";
 }
+
 function isIE() {
   const ua = getUA();
   return ua.indexOf("MSIE ") >= 0 || ua.indexOf("Trident/") >= 0;
 }
+
 function isSafari() {
   return !isNode() && !!navigator.userAgent && navigator.userAgent.includes("Safari") && !navigator.userAgent.includes("Chrome");
 }
+
 function isSafariOrWebkit() {
   return !isNode() && !!navigator.userAgent && (navigator.userAgent.includes("Safari") || navigator.userAgent.includes("WebKit")) && !navigator.userAgent.includes("Chrome");
 }
+
 function isIndexedDBAvailable() {
   try {
     return typeof indexedDB === "object";
@@ -584,6 +553,7 @@ function isIndexedDBAvailable() {
     return false;
   }
 }
+
 function validateIndexedDBOpenable() {
   return new Promise((resolve, reject) => {
     try {
@@ -637,6 +607,7 @@ var ErrorFactory = class {
     return error;
   }
 };
+
 function replaceTemplate(template, data) {
   return template.replace(PATTERN, (_, key) => {
     const value = data[key];
@@ -644,6 +615,7 @@ function replaceTemplate(template, data) {
   });
 }
 var PATTERN = /\{\$([^}]+)}/g;
+
 function isEmpty(obj) {
   for (const key in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
@@ -652,6 +624,7 @@ function isEmpty(obj) {
   }
   return true;
 }
+
 function deepEqual(a, b) {
   if (a === b) {
     return true;
@@ -679,9 +652,11 @@ function deepEqual(a, b) {
   }
   return true;
 }
+
 function isObject(thing) {
   return thing !== null && typeof thing === "object";
 }
+
 function querystring(querystringParams) {
   const params = [];
   for (const [key, value] of Object.entries(querystringParams)) {
@@ -695,6 +670,7 @@ function querystring(querystringParams) {
   }
   return params.length ? "&" + params.join("&") : "";
 }
+
 function querystringDecode(querystring2) {
   const obj = {};
   const tokens = querystring2.replace(/^\?/, "").split("&");
@@ -706,6 +682,7 @@ function querystringDecode(querystring2) {
   });
   return obj;
 }
+
 function extractQuerystring(url) {
   const queryStart = url.indexOf("?");
   if (!queryStart) {
@@ -714,16 +691,13 @@ function extractQuerystring(url) {
   const fragmentStart = url.indexOf("#", queryStart);
   return url.substring(queryStart, fragmentStart > 0 ? fragmentStart : void 0);
 }
+
 function createSubscribe(executor, onNoObservers) {
   const proxy = new ObserverProxy(executor, onNoObservers);
   return proxy.subscribe.bind(proxy);
 }
 var ObserverProxy = class {
-  /**
-   * @param executor Function which can make calls to a single Observer
-   *     as a proxy.
-   * @param onNoObservers Callback when count of Observers goes to zero.
-   */
+  
   constructor(executor, onNoObservers) {
     this.observers = [];
     this.unsubscribes = [];
@@ -754,12 +728,7 @@ var ObserverProxy = class {
     });
     this.close();
   }
-  /**
-   * Subscribe function that can be used to add an Observer to the fan-out list.
-   *
-   * - We require that no event is sent to a subscriber synchronously to their
-   *   call to subscribe().
-   */
+  
   subscribe(nextOrObserver, error, complete) {
     let observer;
     if (nextOrObserver === void 0 && error === void 0 && complete === void 0) {
@@ -804,8 +773,8 @@ var ObserverProxy = class {
     this.observers.push(observer);
     return unsub;
   }
-  // Unsubscribe is synchronous - we guarantee that no events are sent to
-  // any unsubscribed Observer.
+ 
+ 
   unsubscribeOne(i) {
     if (this.observers === void 0 || this.observers[i] === void 0) {
       return;
@@ -824,9 +793,9 @@ var ObserverProxy = class {
       this.sendOne(i, fn);
     }
   }
-  // Call the Observer via one of it's callback function. We are careful to
-  // confirm that the observe has not been unsubscribed since this asynchronous
-  // function had been queued.
+ 
+ 
+ 
   sendOne(i, fn) {
     this.task.then(() => {
       if (this.observers !== void 0 && this.observers[i] !== void 0) {
@@ -854,6 +823,7 @@ var ObserverProxy = class {
     });
   }
 };
+
 function implementsAnyMethods(obj, methods) {
   if (typeof obj !== "object" || obj === null) {
     return false;
@@ -865,9 +835,11 @@ function implementsAnyMethods(obj, methods) {
   }
   return false;
 }
+
 function noop() {
 }
 var MAX_VALUE_MILLIS = 4 * 60 * 60 * 1e3;
+
 function getModularInstance(service) {
   if (service && service._delegate) {
     return service._delegate;
@@ -876,14 +848,8 @@ function getModularInstance(service) {
   }
 }
 
-// node_modules/@firebase/component/dist/esm/index.esm.js
 var Component = class {
-  /**
-   *
-   * @param name The public service name, e.g. app, auth, firestore, database
-   * @param instanceFactory Service factory responsible for creating the public interface
-   * @param type whether the service provided by the component is public or private
-   */
+  
   constructor(name2, instanceFactory, type) {
     this.name = name2;
     this.instanceFactory = instanceFactory;
@@ -916,15 +882,12 @@ var Provider = class {
     this.name = name2;
     this.container = container;
     this.component = null;
-    this.instances = /* @__PURE__ */ new Map();
-    this.instancesDeferred = /* @__PURE__ */ new Map();
-    this.instancesOptions = /* @__PURE__ */ new Map();
-    this.onInitCallbacks = /* @__PURE__ */ new Map();
+    this.instances =  new Map();
+    this.instancesDeferred =  new Map();
+    this.instancesOptions =  new Map();
+    this.onInitCallbacks =  new Map();
   }
-  /**
-   * @param identifier A provider can provide multiple instances of a service
-   * if this.component.multipleInstances is true.
-   */
+  
   get(identifier) {
     const normalizedIdentifier = this.normalizeInstanceIdentifier(identifier);
     if (!this.instancesDeferred.has(normalizedIdentifier)) {
@@ -1003,8 +966,8 @@ var Provider = class {
     this.instancesOptions.delete(identifier);
     this.instances.delete(identifier);
   }
-  // app.delete() will call this method on every provider to delete the services
-  // TODO: should we mark the provider as deleted?
+ 
+ 
   async delete() {
     const services = Array.from(this.instances.values());
     await Promise.all([
@@ -1042,17 +1005,10 @@ var Provider = class {
     }
     return instance;
   }
-  /**
-   *
-   * @param callback - a function that will be invoked  after the provider has been initialized by calling provider.initialize().
-   * The function is invoked SYNCHRONOUSLY, so it should not execute any longrunning tasks in order to not block the program.
-   *
-   * @param identifier An optional instance identifier
-   * @returns a function to unregister the callback
-   */
+  
   onInit(callback, identifier) {
     const normalizedIdentifier = this.normalizeInstanceIdentifier(identifier);
-    const existingCallbacks = this.onInitCallbacks.get(normalizedIdentifier) ?? /* @__PURE__ */ new Set();
+    const existingCallbacks = this.onInitCallbacks.get(normalizedIdentifier) ??  new Set();
     existingCallbacks.add(callback);
     this.onInitCallbacks.set(normalizedIdentifier, existingCallbacks);
     const existingInstance = this.instances.get(normalizedIdentifier);
@@ -1063,10 +1019,7 @@ var Provider = class {
       existingCallbacks.delete(callback);
     };
   }
-  /**
-   * Invoke onInit callbacks synchronously
-   * @param instance the service instance`
-   */
+  
   invokeOnInitCallbacks(instance, identifier) {
     const callbacks = this.onInitCallbacks.get(identifier);
     if (!callbacks) {
@@ -1109,26 +1062,20 @@ var Provider = class {
     return !!this.component && this.component.instantiationMode !== "EXPLICIT";
   }
 };
+
 function normalizeIdentifierForFactory(identifier) {
   return identifier === DEFAULT_ENTRY_NAME ? void 0 : identifier;
 }
+
 function isComponentEager(component) {
   return component.instantiationMode === "EAGER";
 }
 var ComponentContainer = class {
   constructor(name2) {
     this.name = name2;
-    this.providers = /* @__PURE__ */ new Map();
+    this.providers =  new Map();
   }
-  /**
-   *
-   * @param component Component being added
-   * @param overwrite When a component with the same name has already been registered,
-   * if overwrite is true: overwrite the existing component with the new component and create a new
-   * provider with the new component. It can be useful in tests where you want to use different mocks
-   * for different tests.
-   * if overwrite is false: throw an exception
-   */
+  
   addComponent(component) {
     const provider = this.getProvider(component.name);
     if (provider.isComponentSet()) {
@@ -1143,13 +1090,7 @@ var ComponentContainer = class {
     }
     this.addComponent(component);
   }
-  /**
-   * getProvider provides a type safe interface where it can only be called with a field name
-   * present in NameServiceMapping interface.
-   *
-   * Firebase SDKs providing services should extend NameServiceMapping interface to register
-   * themselves.
-   */
+  
   getProvider(name2) {
     if (this.providers.has(name2)) {
       return this.providers.get(name2);
@@ -1163,7 +1104,6 @@ var ComponentContainer = class {
   }
 };
 
-// node_modules/@firebase/logger/dist/esm/index.esm.js
 var instances = [];
 var LogLevel;
 (function(LogLevel2) {
@@ -1190,11 +1130,13 @@ var ConsoleMethod = {
   [LogLevel.WARN]: "warn",
   [LogLevel.ERROR]: "error"
 };
+
 var defaultLogHandler = (instance, logType, ...args) => {
   if (logType < instance.logLevel) {
     return;
   }
-  const now = (/* @__PURE__ */ new Date()).toISOString();
+
+  const now = ( new Date()).toISOString();
   const method = ConsoleMethod[logType];
   if (method) {
     console[method](`[${now}]  ${instance.name}:`, ...args);
@@ -1203,12 +1145,7 @@ var defaultLogHandler = (instance, logType, ...args) => {
   }
 };
 var Logger = class {
-  /**
-   * Gives you an instance of a Logger to capture messages according to
-   * Firebase's logging scheme.
-   *
-   * @param name The name that the logs will be associated with
-   */
+  
   constructor(name2) {
     this.name = name2;
     this._logLevel = defaultLogLevel;
@@ -1225,7 +1162,7 @@ var Logger = class {
     }
     this._logLevel = val;
   }
-  // Workaround for setter/getter having to be the same type.
+ 
   setLogLevel(val) {
     this._logLevel = typeof val === "string" ? levelStringToEnum[val] : val;
   }
@@ -1244,9 +1181,7 @@ var Logger = class {
   set userLogHandler(val) {
     this._userLogHandler = val;
   }
-  /**
-   * The functions below are all based on the `console` interface
-   */
+  
   debug(...args) {
     this._userLogHandler && this._userLogHandler(this, LogLevel.DEBUG, ...args);
     this._logHandler(this, LogLevel.DEBUG, ...args);
@@ -1268,11 +1203,13 @@ var Logger = class {
     this._logHandler(this, LogLevel.ERROR, ...args);
   }
 };
+
 function setLogLevel(level) {
   instances.forEach((inst) => {
     inst.setLogLevel(level);
   });
 }
+
 function setUserLogHandler(logCallback, options) {
   for (const instance of instances) {
     let customLogLevel = null;
@@ -1313,10 +1250,10 @@ function setUserLogHandler(logCallback, options) {
   }
 }
 
-// node_modules/idb/build/wrap-idb-value.js
 var instanceOfAny = (object, constructors) => constructors.some((c) => object instanceof c);
 var idbProxyableTypes;
 var cursorAdvanceMethods;
+
 function getIdbProxyableTypes() {
   return idbProxyableTypes || (idbProxyableTypes = [
     IDBDatabase,
@@ -1326,6 +1263,7 @@ function getIdbProxyableTypes() {
     IDBTransaction
   ]);
 }
+
 function getCursorAdvanceMethods() {
   return cursorAdvanceMethods || (cursorAdvanceMethods = [
     IDBCursor.prototype.advance,
@@ -1333,21 +1271,25 @@ function getCursorAdvanceMethods() {
     IDBCursor.prototype.continuePrimaryKey
   ]);
 }
-var cursorRequestMap = /* @__PURE__ */ new WeakMap();
-var transactionDoneMap = /* @__PURE__ */ new WeakMap();
-var transactionStoreNamesMap = /* @__PURE__ */ new WeakMap();
-var transformCache = /* @__PURE__ */ new WeakMap();
-var reverseTransformCache = /* @__PURE__ */ new WeakMap();
+var cursorRequestMap =  new WeakMap();
+var transactionDoneMap =  new WeakMap();
+var transactionStoreNamesMap =  new WeakMap();
+var transformCache =  new WeakMap();
+var reverseTransformCache =  new WeakMap();
+
 function promisifyRequest(request) {
   const promise = new Promise((resolve, reject) => {
+
     const unlisten = () => {
       request.removeEventListener("success", success);
       request.removeEventListener("error", error);
     };
+
     const success = () => {
       resolve(wrap(request.result));
       unlisten();
     };
+
     const error = () => {
       reject(request.error);
       unlisten();
@@ -1364,19 +1306,23 @@ function promisifyRequest(request) {
   reverseTransformCache.set(promise, request);
   return promise;
 }
+
 function cacheDonePromiseForTransaction(tx) {
   if (transactionDoneMap.has(tx))
     return;
   const done = new Promise((resolve, reject) => {
+
     const unlisten = () => {
       tx.removeEventListener("complete", complete);
       tx.removeEventListener("error", error);
       tx.removeEventListener("abort", error);
     };
+
     const complete = () => {
       resolve();
       unlisten();
     };
+
     const error = () => {
       reject(tx.error || new DOMException("AbortError", "AbortError"));
       unlisten();
@@ -1412,9 +1358,11 @@ var idbProxyTraps = {
     return prop in target;
   }
 };
+
 function replaceTraps(callback) {
   idbProxyTraps = callback(idbProxyTraps);
 }
+
 function wrapFunction(func) {
   if (func === IDBDatabase.prototype.transaction && !("objectStoreNames" in IDBTransaction.prototype)) {
     return function(storeNames, ...args) {
@@ -1433,6 +1381,7 @@ function wrapFunction(func) {
     return wrap(func.apply(unwrap(this), args));
   };
 }
+
 function transformCachableValue(value) {
   if (typeof value === "function")
     return wrapFunction(value);
@@ -1442,6 +1391,7 @@ function transformCachableValue(value) {
     return new Proxy(value, idbProxyTraps);
   return value;
 }
+
 function wrap(value) {
   if (value instanceof IDBRequest)
     return promisifyRequest(value);
@@ -1454,9 +1404,9 @@ function wrap(value) {
   }
   return newValue;
 }
+
 var unwrap = (value) => reverseTransformCache.get(value);
 
-// node_modules/idb/build/index.js
 function openDB(name2, version2, { blocked, upgrade, blocking, terminated } = {}) {
   const request = indexedDB.open(name2, version2);
   const openPromise = wrap(request);
@@ -1467,7 +1417,7 @@ function openDB(name2, version2, { blocked, upgrade, blocking, terminated } = {}
   }
   if (blocked) {
     request.addEventListener("blocked", (event) => blocked(
-      // Casting due to https://github.com/microsoft/TypeScript-DOM-lib-generator/pull/1405
+     
       event.oldVersion,
       event.newVersion,
       event
@@ -1485,7 +1435,8 @@ function openDB(name2, version2, { blocked, upgrade, blocking, terminated } = {}
 }
 var readMethods = ["get", "getKey", "getAll", "getAllKeys", "count"];
 var writeMethods = ["put", "add", "delete", "clear"];
-var cachedMethods = /* @__PURE__ */ new Map();
+var cachedMethods =  new Map();
+
 function getMethod(target, prop) {
   if (!(target instanceof IDBDatabase && !(prop in target) && typeof prop === "string")) {
     return;
@@ -1496,7 +1447,7 @@ function getMethod(target, prop) {
   const useIndex = prop !== targetFuncName;
   const isWrite = writeMethods.includes(targetFuncName);
   if (
-    // Bail if the target doesn't exist on the target. Eg, getAll isn't in Edge.
+   
     !(targetFuncName in (useIndex ? IDBIndex : IDBObjectStore).prototype) || !(isWrite || readMethods.includes(targetFuncName))
   ) {
     return;
@@ -1520,13 +1471,12 @@ replaceTraps((oldTraps) => ({
   has: (target, prop) => !!getMethod(target, prop) || oldTraps.has(target, prop)
 }));
 
-// node_modules/@firebase/app/dist/esm/index.esm.js
 var PlatformLoggerServiceImpl = class {
   constructor(container) {
     this.container = container;
   }
-  // In initial implementation, this will be called by installations on
-  // auth token refresh, and installations will send this string.
+ 
+ 
   getPlatformInfoString() {
     const providers = this.container.getProviders();
     return providers.map((provider) => {
@@ -1539,6 +1489,7 @@ var PlatformLoggerServiceImpl = class {
     }).filter((logString) => logString).join(" ");
   }
 };
+
 function isVersionServiceProvider(provider) {
   const component = provider.getComponent();
   return component?.type === "VERSION";
@@ -1602,12 +1553,13 @@ var PLATFORM_LOG_STRING = {
   [name$1]: "fire-fst-compat",
   [name$2]: "fire-vertex",
   "fire-js": "fire-js",
-  // Platform identifier for JS SDK.
+ 
   [name]: "fire-js-all"
 };
-var _apps = /* @__PURE__ */ new Map();
-var _serverApps = /* @__PURE__ */ new Map();
-var _components = /* @__PURE__ */ new Map();
+var _apps =  new Map();
+var _serverApps =  new Map();
+var _components =  new Map();
+
 function _addComponent(app, component) {
   try {
     app.container.addComponent(component);
@@ -1615,9 +1567,11 @@ function _addComponent(app, component) {
     logger.debug(`Component ${component.name} failed to register with FirebaseApp ${app.name}`, e);
   }
 }
+
 function _addOrOverwriteComponent(app, component) {
   app.container.addOrOverwriteComponent(component);
 }
+
 function _registerComponent(component) {
   const componentName = component.name;
   if (_components.has(componentName)) {
@@ -1633,6 +1587,7 @@ function _registerComponent(component) {
   }
   return true;
 }
+
 function _getProvider(app, name2) {
   const heartbeatController = app.container.getProvider("heartbeat").getImmediate({ optional: true });
   if (heartbeatController) {
@@ -1640,83 +1595,88 @@ function _getProvider(app, name2) {
   }
   return app.container.getProvider(name2);
 }
+
 function _removeServiceInstance(app, name2, instanceIdentifier = DEFAULT_ENTRY_NAME2) {
   _getProvider(app, name2).clearInstance(instanceIdentifier);
 }
+
 function _isFirebaseApp(obj) {
   return obj.options !== void 0;
 }
+
 function _isFirebaseServerAppSettings(obj) {
   if (_isFirebaseApp(obj)) {
     return false;
   }
   return "authIdToken" in obj || "appCheckToken" in obj || "releaseOnDeref" in obj || "automaticDataCollectionEnabled" in obj;
 }
+
 function _isFirebaseServerApp(obj) {
   if (obj === null || obj === void 0) {
     return false;
   }
   return obj.settings !== void 0;
 }
+
 function _clearComponents() {
   _components.clear();
 }
 var ERRORS = {
   [
     "no-app"
-    /* AppError.NO_APP */
+    
   ]: "No Firebase App '{$appName}' has been created - call initializeApp() first",
   [
     "bad-app-name"
-    /* AppError.BAD_APP_NAME */
+    
   ]: "Illegal App name: '{$appName}'",
   [
     "duplicate-app"
-    /* AppError.DUPLICATE_APP */
+    
   ]: "Firebase App named '{$appName}' already exists with different options or config",
   [
     "app-deleted"
-    /* AppError.APP_DELETED */
+    
   ]: "Firebase App named '{$appName}' already deleted",
   [
     "server-app-deleted"
-    /* AppError.SERVER_APP_DELETED */
+    
   ]: "Firebase Server App has been deleted",
   [
     "no-options"
-    /* AppError.NO_OPTIONS */
+    
   ]: "Need to provide options, when not being deployed to hosting via source.",
   [
     "invalid-app-argument"
-    /* AppError.INVALID_APP_ARGUMENT */
+    
   ]: "firebase.{$appName}() takes either no argument or a Firebase App instance.",
   [
     "invalid-log-argument"
-    /* AppError.INVALID_LOG_ARGUMENT */
+    
   ]: "First argument to `onLog` must be null or a function.",
   [
     "idb-open"
-    /* AppError.IDB_OPEN */
+    
   ]: "Error thrown when opening IndexedDB. Original error: {$originalErrorMessage}.",
   [
     "idb-get"
-    /* AppError.IDB_GET */
+    
   ]: "Error thrown when reading from IndexedDB. Original error: {$originalErrorMessage}.",
   [
     "idb-set"
-    /* AppError.IDB_WRITE */
+    
   ]: "Error thrown when writing to IndexedDB. Original error: {$originalErrorMessage}.",
   [
     "idb-delete"
-    /* AppError.IDB_DELETE */
+    
   ]: "Error thrown when deleting from IndexedDB. Original error: {$originalErrorMessage}.",
   [
     "finalization-registry-not-supported"
-    /* AppError.FINALIZATION_REGISTRY_NOT_SUPPORTED */
+    
   ]: "FirebaseServerApp deleteOnDeref field defined but the JS runtime does not support FinalizationRegistry.",
   [
     "invalid-server-app-environment"
-    /* AppError.INVALID_SERVER_APP_ENVIRONMENT */
+    
   ]: "FirebaseServerApp is not for use in browser environments."
 };
 var ERROR_FACTORY = new ErrorFactory("app", "Firebase", ERRORS);
@@ -1732,7 +1692,7 @@ var FirebaseAppImpl = class {
       "app",
       () => this,
       "PUBLIC"
-      /* ComponentType.PUBLIC */
+      
     ));
   }
   get automaticDataCollectionEnabled() {
@@ -1764,16 +1724,14 @@ var FirebaseAppImpl = class {
   set isDeleted(val) {
     this._isDeleted = val;
   }
-  /**
-   * This function will throw an Error if the App has already been deleted -
-   * use before performing API actions on the App.
-   */
+  
   checkDestroyed() {
     if (this.isDeleted) {
       throw ERROR_FACTORY.create("app-deleted", { appName: this._name });
     }
   }
 };
+
 function validateTokenTTL(base64Token, tokenName) {
   const secondPart = base64Decode(base64Token.split(".")[1]);
   if (secondPart === null) {
@@ -1786,7 +1744,8 @@ function validateTokenTTL(base64Token, tokenName) {
     return;
   }
   const exp = JSON.parse(secondPart).exp * 1e3;
-  const now = (/* @__PURE__ */ new Date()).getTime();
+
+  const now = ( new Date()).getTime();
   const diff = exp - now;
   if (diff <= 0) {
     console.error(`FirebaseServerApp ${tokenName} is invalid: the token has expired.`);
@@ -1833,8 +1792,8 @@ var FirebaseServerAppImpl = class extends FirebaseAppImpl {
   get refCount() {
     return this._refCount;
   }
-  // Increment the reference count of this server app. If an object is provided, register it
-  // with the finalization registry.
+ 
+ 
   incRefCount(obj) {
     if (this.isDeleted) {
       return;
@@ -1844,16 +1803,16 @@ var FirebaseServerAppImpl = class extends FirebaseAppImpl {
       this._finalizationRegistry.register(obj, this);
     }
   }
-  // Decrement the reference count.
+ 
   decRefCount() {
     if (this.isDeleted) {
       return 0;
     }
     return --this._refCount;
   }
-  // Invoked by the FinalizationRegistry callback to note that this app should go through its
-  // reference counts and delete itself if no reference count remain. The coordinating logic that
-  // handles this is in deleteApp(...).
+ 
+ 
+ 
   automaticCleanup() {
     void deleteApp(this);
   }
@@ -1861,20 +1820,18 @@ var FirebaseServerAppImpl = class extends FirebaseAppImpl {
     this.checkDestroyed();
     return this._serverConfig;
   }
-  /**
-   * This function will throw an Error if the App has already been deleted -
-   * use before performing API actions on the App.
-   */
+  
   checkDestroyed() {
     if (this.isDeleted) {
       throw ERROR_FACTORY.create(
         "server-app-deleted"
-        /* AppError.SERVER_APP_DELETED */
+        
       );
     }
   }
 };
 var SDK_VERSION = version;
+
 function initializeApp(_options, rawConfig = {}) {
   let options = _options;
   if (typeof rawConfig !== "object") {
@@ -1896,7 +1853,7 @@ function initializeApp(_options, rawConfig = {}) {
   if (!options) {
     throw ERROR_FACTORY.create(
       "no-options"
-      /* AppError.NO_OPTIONS */
+      
     );
   }
   const existingApp = _apps.get(name2);
@@ -1915,11 +1872,12 @@ function initializeApp(_options, rawConfig = {}) {
   _apps.set(name2, newApp);
   return newApp;
 }
+
 function initializeServerApp(_options, _serverAppConfig = {}) {
   if (isBrowser() && !isWebWorker()) {
     throw ERROR_FACTORY.create(
       "invalid-server-app-environment"
-      /* AppError.INVALID_SERVER_APP_ENVIRONMENT */
+      
     );
   }
   let firebaseOptions;
@@ -1940,7 +1898,7 @@ function initializeServerApp(_options, _serverAppConfig = {}) {
   if (!firebaseOptions) {
     throw ERROR_FACTORY.create(
       "no-options"
-      /* AppError.NO_OPTIONS */
+      
     );
   }
   const nameObj = {
@@ -1950,6 +1908,7 @@ function initializeServerApp(_options, _serverAppConfig = {}) {
   if (nameObj.releaseOnDeref !== void 0) {
     delete nameObj.releaseOnDeref;
   }
+
   const hashCode = (s) => {
     return [...s].reduce((hash, c) => Math.imul(31, hash) + c.charCodeAt(0) | 0, 0);
   };
@@ -1972,6 +1931,7 @@ function initializeServerApp(_options, _serverAppConfig = {}) {
   _serverApps.set(nameString, newApp);
   return newApp;
 }
+
 function getApp(name2 = DEFAULT_ENTRY_NAME2) {
   const app = _apps.get(name2);
   if (!app && name2 === DEFAULT_ENTRY_NAME2 && getDefaultAppConfig()) {
@@ -1982,6 +1942,7 @@ function getApp(name2 = DEFAULT_ENTRY_NAME2) {
   }
   return app;
 }
+
 function getApps() {
   return Array.from(_apps.values());
 }
@@ -2003,6 +1964,7 @@ async function deleteApp(app) {
     app.isDeleted = true;
   }
 }
+
 function registerVersion(libraryKeyOrName, version2, variant) {
   let library = PLATFORM_LOG_STRING[libraryKeyOrName] ?? libraryKeyOrName;
   if (variant) {
@@ -2030,18 +1992,20 @@ function registerVersion(libraryKeyOrName, version2, variant) {
     `${library}-version`,
     () => ({ library, version: version2 }),
     "VERSION"
-    /* ComponentType.VERSION */
+    
   ));
 }
+
 function onLog(logCallback, options) {
   if (logCallback !== null && typeof logCallback !== "function") {
     throw ERROR_FACTORY.create(
       "invalid-log-argument"
-      /* AppError.INVALID_LOG_ARGUMENT */
+      
     );
   }
   setUserLogHandler(logCallback, options);
 }
+
 function setLogLevel2(logLevel) {
   setLogLevel(logLevel);
 }
@@ -2049,6 +2013,7 @@ var DB_NAME = "firebase-heartbeat-database";
 var DB_VERSION = 1;
 var STORE_NAME = "firebase-heartbeat-store";
 var dbPromise = null;
+
 function getDbPromise() {
   if (!dbPromise) {
     dbPromise = openDB(DB_NAME, DB_VERSION, {
@@ -2106,6 +2071,7 @@ async function writeHeartbeatsToIndexedDB(app, heartbeatObject) {
     }
   }
 }
+
 function computeKey(app) {
   return `${app.name}!${app.options.appId}`;
 }
@@ -2122,13 +2088,7 @@ var HeartbeatServiceImpl = class {
       return result;
     });
   }
-  /**
-   * Called to report a heartbeat. The function will generate
-   * a HeartbeatsByUserAgent object, update heartbeatsCache, and persist it
-   * to IndexedDB.
-   * Note that we only store one heartbeat per day. So if a heartbeat for today is
-   * already logged, subsequent calls to this function in the same day will be ignored.
-   */
+  
   async triggerHeartbeat() {
     try {
       const platformLogger = this.container.getProvider("platform-logger").getImmediate();
@@ -2154,13 +2114,7 @@ var HeartbeatServiceImpl = class {
       logger.warn(e);
     }
   }
-  /**
-   * Returns a base64 encoded string which can be attached to the heartbeat-specific header directly.
-   * It also clears all heartbeats from memory as well as in IndexedDB.
-   *
-   * NOTE: Consuming product SDKs should not send the header if this method
-   * returns an empty string.
-   */
+  
   async getHeartbeatsHeader() {
     try {
       if (this._heartbeatsCache === null) {
@@ -2187,10 +2141,12 @@ var HeartbeatServiceImpl = class {
     }
   }
 };
+
 function getUTCDateString() {
-  const today = /* @__PURE__ */ new Date();
+  const today =  new Date();
   return today.toISOString().substring(0, 10);
 }
+
 function extractHeartbeatsForHeader(heartbeatsCache, maxSize = MAX_HEADER_BYTES) {
   const heartbeatsToSend = [];
   let unsentEntries = heartbeatsCache.slice();
@@ -2231,9 +2187,7 @@ var HeartbeatStorageImpl = class {
       return validateIndexedDBOpenable().then(() => true).catch(() => false);
     }
   }
-  /**
-   * Read all heartbeats.
-   */
+  
   async read() {
     const canUseIndexedDB = await this._canUseIndexedDBPromise;
     if (!canUseIndexedDB) {
@@ -2247,7 +2201,7 @@ var HeartbeatStorageImpl = class {
       }
     }
   }
-  // overwrite the storage with the provided heartbeats
+ 
   async overwrite(heartbeatsObject) {
     const canUseIndexedDB = await this._canUseIndexedDBPromise;
     if (!canUseIndexedDB) {
@@ -2260,7 +2214,7 @@ var HeartbeatStorageImpl = class {
       });
     }
   }
-  // add heartbeats
+ 
   async add(heartbeatsObject) {
     const canUseIndexedDB = await this._canUseIndexedDBPromise;
     if (!canUseIndexedDB) {
@@ -2277,12 +2231,14 @@ var HeartbeatStorageImpl = class {
     }
   }
 };
+
 function countBytes(heartbeatsCache) {
   return base64urlEncodeWithoutPadding(
-    // heartbeatsCache wrapper properties
+   
     JSON.stringify({ version: 2, heartbeats: heartbeatsCache })
   ).length;
 }
+
 function getEarliestHeartbeatIdx(heartbeats) {
   if (heartbeats.length === 0) {
     return -1;
@@ -2297,18 +2253,19 @@ function getEarliestHeartbeatIdx(heartbeats) {
   }
   return earliestHeartbeatIdx;
 }
+
 function registerCoreComponents(variant) {
   _registerComponent(new Component(
     "platform-logger",
     (container) => new PlatformLoggerServiceImpl(container),
     "PRIVATE"
-    /* ComponentType.PRIVATE */
+    
   ));
   _registerComponent(new Component(
     "heartbeat",
     (container) => new HeartbeatServiceImpl(container),
     "PRIVATE"
-    /* ComponentType.PRIVATE */
+    
   ));
   registerVersion(name$q, version$1, variant);
   registerVersion(name$q, version$1, "esm2020");
@@ -2370,4 +2327,3 @@ export {
   onLog,
   setLogLevel2 as setLogLevel
 };
-//# sourceMappingURL=chunk-OFVY3MGE.js.map

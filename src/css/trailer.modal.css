@@ -1,28 +1,21 @@
-/* =============================
-   5. TRAILER MODAL (VIDEO) STİLLERİ
-============================== */
-
-/* .modal-window sınıfının daraltıcı etkisini ezmek için 'trailer-modal-content'i kullanıyoruz */
 .modal-window.trailer-modal-content {
-  width: 800px !important;   /* Genişliği zorla (Login modalından etkilenmesin) */
-  max-width: 95%; 
-           /* Mobilde ekranı taşırmasın */
-  padding: 0;                /* Videonun kenarında boşluk olmasın */
-  background-color: #000;    /* Siyah zemin */
-  overflow: hidden;          /* Kenarları yuvarlatınca video taşmasın */
+  width: 800px !important;
+  max-width: 95%;
+
+  padding: 0;
+  background-color: #000;
+  overflow: hidden;
 }
 
-/* Iframe Kapsayıcısı */
 .trailer-modal-body {
   position: relative;
   width: 100%;
-  /* Aspect Ratio (16:9) korumak için padding trick */
-  padding-bottom: 56.25%; 
+
+  padding-bottom: 56.25%;
   height: 0;
   background: #000;
 }
 
-/* Iframe Ayarı */
 .trailer-modal-body iframe {
   position: absolute;
   top: 0;
@@ -32,7 +25,6 @@
   border: none;
 }
 
-/* Kapatma butonu trailerda biraz daha belirgin olsun */
 #trailer-modal-close-btn {
   font-size: 30px;
   border-radius: 50%;
@@ -43,25 +35,23 @@
   justify-content: center;
   top: 10px;
   right: 10px;
-  z-index: 20; /* Videonun üstünde kalsın */
-  
+  z-index: 20;
 }
 
 @media (max-width: 320px) {
-.modal-window.trailer-modal-content{
-height: 130px !important;
+  .modal-window.trailer-modal-content {
+    height: 130px !important;
+  }
 }
-}
-
 
 @media (max-width: 768px) {
-.modal-window.trailer-modal-content{
-height: 230px !important;
-}
+  .modal-window.trailer-modal-content {
+    height: 230px !important;
+  }
 }
 
 @media (max-width: 472px) {
-.modal-window.trailer-modal-content{
-height: 175px !important;
-}
+  .modal-window.trailer-modal-content {
+    height: 175px !important;
+  }
 }

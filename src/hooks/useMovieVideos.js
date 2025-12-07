@@ -1,6 +1,5 @@
-// src/hooks/useMovieVideos.js
-import { useState, useEffect } from "react";
-import { fetchMovieVideos } from "../utils/moviesApi";
+import { useState, useEffect } from 'react';
+import { fetchMovieVideos } from '../utils/moviesApi';
 
 export function useMovieVideos(movieId) {
   const [videos, setVideos] = useState([]);

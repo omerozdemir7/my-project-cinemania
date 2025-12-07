@@ -1,4 +1,3 @@
-// src/components/Pagination.jsx
 import React from 'react';
 
 export function Pagination({ totalPages, currentPage, onPageChange }) {
@@ -14,7 +13,6 @@ export function Pagination({ totalPages, currentPage, onPageChange }) {
 
   const pages = [];
 
-  // Previous button
   pages.push(
     <button
       key="prev"
@@ -23,10 +21,9 @@ export function Pagination({ totalPages, currentPage, onPageChange }) {
       onClick={() => onPageChange(currentPage - 1)}
     >
       &laquo;
-    </button>
+    </button>,
   );
 
-  // First page
   if (start > 1) {
     pages.push(
       <button
@@ -35,14 +32,17 @@ export function Pagination({ totalPages, currentPage, onPageChange }) {
         onClick={() => onPageChange(1)}
       >
         1
-      </button>
+      </button>,
     );
     if (start > 2) {
-      pages.push(<span key="dots1" className="pagination-dots">...</span>);
+      pages.push(
+        <span key="dots1" className="pagination-dots">
+          ...
+        </span>,
+      );
     }
   }
 
-  // Page numbers
   for (let i = start; i <= end; i++) {
     pages.push(
       <button
@@ -51,14 +51,17 @@ export function Pagination({ totalPages, currentPage, onPageChange }) {
         onClick={() => onPageChange(i)}
       >
         {i}
-      </button>
+      </button>,
     );
   }
 
-  // Last page
   if (end < totalPages) {
     if (end < totalPages - 1) {
-      pages.push(<span key="dots2" className="pagination-dots">...</span>);
+      pages.push(
+        <span key="dots2" className="pagination-dots">
+          ...
+        </span>,
+      );
     }
     pages.push(
       <button
@@ -67,11 +70,10 @@ export function Pagination({ totalPages, currentPage, onPageChange }) {
         onClick={() => onPageChange(totalPages)}
       >
         {totalPages}
-      </button>
+      </button>,
     );
   }
 
-  // Next button
   pages.push(
     <button
       key="next"
@@ -80,7 +82,7 @@ export function Pagination({ totalPages, currentPage, onPageChange }) {
       onClick={() => onPageChange(currentPage + 1)}
     >
       &raquo;
-    </button>
+    </button>,
   );
 
   return <div className="pagination">{pages}</div>;

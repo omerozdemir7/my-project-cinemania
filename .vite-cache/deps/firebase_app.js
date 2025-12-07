@@ -1,3 +1,5 @@
+
+
 import {
   DEFAULT_ENTRY_NAME,
   FirebaseError,
@@ -25,7 +27,6 @@ import {
 } from "./chunk-OFVY3MGE.js";
 import "./chunk-5WRI5ZAA.js";
 
-// node_modules/firebase/app/dist/esm/index.esm.js
 var name = "firebase";
 var version = "12.6.0";
 registerVersion(name, version, "app");
@@ -54,4 +55,3 @@ export {
   registerVersion,
   setLogLevel
 };
-//# sourceMappingURL=firebase_app.js.map

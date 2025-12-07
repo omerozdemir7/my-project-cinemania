@@ -1,3 +1,5 @@
+
+
 import {
   require_react
 } from "./chunk-6VPNIYGA.js";
@@ -5,11 +7,11 @@ import {
   __commonJS
 } from "./chunk-5WRI5ZAA.js";
 
-// node_modules/react/cjs/react-jsx-dev-runtime.development.js
 var require_react_jsx_dev_runtime_development = __commonJS({
   "node_modules/react/cjs/react-jsx-dev-runtime.development.js"(exports) {
     "use strict";
     (function() {
+
       function getComponentNameFromType(type) {
         if (null == type) return null;
         if ("function" === typeof type)
@@ -56,9 +58,11 @@ var require_react_jsx_dev_runtime_development = __commonJS({
           }
         return null;
       }
+
       function testStringCoercion(value) {
         return "" + value;
       }
+
       function checkKeyStringCoercion(value) {
         try {
           testStringCoercion(value);
@@ -78,6 +82,7 @@ var require_react_jsx_dev_runtime_development = __commonJS({
           return testStringCoercion(value);
         }
       }
+
       function getTaskName(type) {
         if (type === REACT_FRAGMENT_TYPE) return "<>";
         if ("object" === typeof type && null !== type && type.$$typeof === REACT_LAZY_TYPE)
@@ -89,13 +94,16 @@ var require_react_jsx_dev_runtime_development = __commonJS({
           return "<...>";
         }
       }
+
       function getOwner() {
         var dispatcher = ReactSharedInternals.A;
         return null === dispatcher ? null : dispatcher.getOwner();
       }
+
       function UnknownOwner() {
         return Error("react-stack-top-frame");
       }
+
       function hasValidKey(config) {
         if (hasOwnProperty.call(config, "key")) {
           var getter = Object.getOwnPropertyDescriptor(config, "key").get;
@@ -103,7 +111,9 @@ var require_react_jsx_dev_runtime_development = __commonJS({
         }
         return void 0 !== config.key;
       }
+
       function defineKeyPropWarningGetter(props, displayName) {
+
         function warnAboutAccessingKey() {
           specialPropKeyWarningShown || (specialPropKeyWarningShown = true, console.error(
             "%s: `key` is not a prop. Trying to access it will result in `undefined` being returned. If you need to access the same value within the child component, you should pass it as a different prop. (https://react.dev/link/special-props)",
@@ -116,6 +126,7 @@ var require_react_jsx_dev_runtime_development = __commonJS({
           configurable: true
         });
       }
+
       function elementRefGetterWithDeprecationWarning() {
         var componentName = getComponentNameFromType(this.type);
         didWarnAboutElementRef[componentName] || (didWarnAboutElementRef[componentName] = true, console.error(
@@ -124,6 +135,7 @@ var require_react_jsx_dev_runtime_development = __commonJS({
         componentName = this.props.ref;
         return void 0 !== componentName ? componentName : null;
       }
+
       function ReactElement(type, key, props, owner, debugStack, debugTask) {
         var refProp = props.ref;
         type = {
@@ -165,6 +177,7 @@ var require_react_jsx_dev_runtime_development = __commonJS({
         Object.freeze && (Object.freeze(type.props), Object.freeze(type));
         return type;
       }
+
       function jsxDEVImpl(type, config, maybeKey, isStaticChildren, debugStack, debugTask) {
         var children = config.children;
         if (void 0 !== children)
@@ -213,9 +226,11 @@ var require_react_jsx_dev_runtime_development = __commonJS({
           debugTask
         );
       }
+
       function validateChildKeys(node) {
         isValidElement(node) ? node._store && (node._store.validated = 1) : "object" === typeof node && null !== node && node.$$typeof === REACT_LAZY_TYPE && ("fulfilled" === node._payload.status ? isValidElement(node._payload.value) && node._payload.value._store && (node._payload.value._store.validated = 1) : node._store && (node._store.validated = 1));
       }
+
       function isValidElement(object) {
         return "object" === typeof object && null !== object && object.$$typeof === REACT_ELEMENT_TYPE;
       }
@@ -251,7 +266,6 @@ var require_react_jsx_dev_runtime_development = __commonJS({
   }
 });
 
-// node_modules/react/jsx-dev-runtime.js
 var require_jsx_dev_runtime = __commonJS({
   "node_modules/react/jsx-dev-runtime.js"(exports, module) {
     if (false) {
@@ -262,4 +276,3 @@ var require_jsx_dev_runtime = __commonJS({
   }
 });
 export default require_jsx_dev_runtime();
-//# sourceMappingURL=react_jsx-dev-runtime.js.map

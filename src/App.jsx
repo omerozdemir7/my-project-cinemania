@@ -1,4 +1,3 @@
-// src/App.jsx
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Header } from './components/layout/Header';
@@ -21,7 +20,6 @@ function App() {
   const [selectedMovieId, setSelectedMovieId] = useState(null);
   const [trailerVideoKey, setTrailerVideoKey] = useState(null);
 
-  // Theme toggle functionality
   useEffect(() => {
     const themeToggle = document.getElementById('theme-toggle-checkbox');
     const body = document.body;
@@ -51,17 +49,21 @@ function App() {
   useEffect(() => {
     const addGoogleTranslateScript = () => {
       if (document.querySelector('script[src*="translate.google.com"]')) return;
-      
-      window.googleTranslateElementInit = function() {
-        new window.google.translate.TranslateElement({
-          pageLanguage: 'en',
-          autoDisplay: false
-        }, 'google_translate_element');
+
+      window.googleTranslateElementInit = function () {
+        new window.google.translate.TranslateElement(
+          {
+            pageLanguage: 'en',
+            autoDisplay: false,
+          },
+          'google_translate_element',
+        );
       };
 
       const script = document.createElement('script');
       script.type = 'text/javascript';
-      script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+      script.src =
+        '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
       document.body.appendChild(script);
     };
 
@@ -86,66 +88,66 @@ function App() {
     <Router basename="/my-project-cinemania/">
       <div className="App">
         <Header onLoginClick={() => setIsLoginModalOpen(true)} />
-        
+
         <main>
           <Routes>
-            <Route 
-              path="/" 
+            <Route
+              path="/"
               element={
-                <HomePage 
+                <HomePage
                   onMovieClick={handleMovieClick}
                   onWatchTrailer={handleWatchTrailer}
                 />
-              } 
+              }
             />
-            <Route 
-              path="/catalog" 
+            <Route
+              path="/catalog"
               element={
-                <CatalogPage 
+                <CatalogPage
                   onMovieClick={handleMovieClick}
                   onWatchTrailer={handleWatchTrailer}
                 />
-              } 
+              }
             />
-            <Route 
-              path="/library" 
+            <Route
+              path="/library"
               element={
-                <LibraryPage 
+                <LibraryPage
                   onMovieClick={handleMovieClick}
                   onWatchTrailer={handleWatchTrailer}
                 />
-              } 
+              }
             />
           </Routes>
         </main>
 
         <Footer onTeamModalOpen={() => setIsTeamModalOpen(true)} />
 
-        {/* Modals */}
-        <LoginModal 
-          isOpen={isLoginModalOpen} 
-          onClose={() => setIsLoginModalOpen(false)} 
+        {}
+        <LoginModal
+          isOpen={isLoginModalOpen}
+          onClose={() => setIsLoginModalOpen(false)}
         />
-        
-        <MovieDetailsModal 
-          isOpen={isMovieModalOpen} 
+
+        <MovieDetailsModal
+          isOpen={isMovieModalOpen}
           onClose={() => setIsMovieModalOpen(false)}
           movieId={selectedMovieId}
         />
-        
-        <TrailerModal 
-          isOpen={isTrailerModalOpen} 
+
+        <TrailerModal
+          isOpen={isTrailerModalOpen}
           onClose={() => setIsTrailerModalOpen(false)}
           videoKey={trailerVideoKey}
         />
-        
-        <TrailerErrorModal 
-          isOpen={isTrailerErrorModalOpen} 
+
+        <TrailerErrorModal
+          isOpen={isTrailerErrorModalOpen}
           onClose={() => setIsTrailerErrorModalOpen(false)}
         />
-        
-        <TeamModal 
-          isOpen={isTeamModalOpen} 
+
+        <TeamModal
+          isOpen={isTeamModalOpen}
           onClose={() => setIsTeamModalOpen(false)}
         />
       </div>

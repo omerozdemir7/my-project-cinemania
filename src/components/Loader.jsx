@@ -1,11 +1,10 @@
-// src/components/Loader.jsx
 import React from 'react';
 
 export function Loader() {
   const loaderStyle = {
     position: 'fixed',
     inset: 0,
- background: '#000',
+    background: '#000',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -13,7 +12,7 @@ export function Loader() {
     color: 'white',
     fontSize: '18px',
     flexDirection: 'column',
-    backdropFilter: 'blur(3px)'
+    backdropFilter: 'blur(3px)',
   };
 
   const spinnerStyle = {
@@ -23,7 +22,7 @@ export function Loader() {
     width: '60px',
     height: '60px',
     animation: 'spin 1s linear infinite',
-    marginBottom: '10px'
+    marginBottom: '10px',
   };
 
   return (

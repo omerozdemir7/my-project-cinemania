@@ -1,15 +1,9 @@
-/* ==========================================================================
-   MOVIE CARD & GRID (MOBILE-FIRST)
-   ========================================================================== */
-
-/* --- Base Grid Style (Mobile) --- */
 .movie-grid-container {
   display: grid;
-  grid-template-columns: 1fr; /* 1 column by default */
+  grid-template-columns: 1fr;
   gap: 18px;
 }
 
-/* --- Base Card Style --- */
 .movie-card {
   position: relative;
   border-radius: 8px;
@@ -18,8 +12,8 @@
   transition:
     transform 0.3s ease,
     box-shadow 0.3s ease;
-  aspect-ratio: 2 / 3; /* Poster ratio */
-  background-color: #222; /* Placeholder color */
+  aspect-ratio: 2 / 3;
+  background-color: #222;
 }
 
 .movie-card:hover {
@@ -88,11 +82,6 @@
   color: rgba(255, 255, 255, 0.2);
 }
 
-/* ==========================================================================
-   TABLET & DESKTOP GRID STYLES
-   ========================================================================== */
-
-/* --- Tablet: 2 Columns --- */
 @media (min-width: 481px) {
   .movie-grid-container {
     grid-template-columns: repeat(2, 1fr);
@@ -100,7 +89,6 @@
   }
 }
 
-/* --- Desktop: 3 Columns --- */
 @media (min-width: 769px) {
   .movie-grid-container {
     grid-template-columns: repeat(3, 1fr);

@@ -1,4 +1,3 @@
-// src/pages/CatalogPage.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { HeroSection } from '../components/sections/HeroSection';
 import { MovieCard } from '../components/MovieCard';
@@ -105,9 +104,9 @@ export function CatalogPage({ onMovieClick, onWatchTrailer }) {
   return (
     <>
       {loading && <Loader />}
-      
-      <HeroSection 
-        movieId={heroMovieId} 
+
+      <HeroSection
+        movieId={heroMovieId}
         onWatchTrailer={onWatchTrailer}
         onMoreDetails={onMovieClick}
       />
@@ -115,32 +114,36 @@ export function CatalogPage({ onMovieClick, onWatchTrailer }) {
       <section className="search-section">
         <div className="container">
           <form className="search-form" onSubmit={handleSearch}>
-            <input 
-              type="text" 
-              className="search-bar" 
-              placeholder="Search" 
+            <input
+              type="text"
+              className="search-bar"
+              placeholder="Search"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-            
-            <div 
-              className={`custom-dropdown ${isDropdownOpen ? 'active' : ''}`} 
+
+            <div
+              className={`custom-dropdown ${isDropdownOpen ? 'active' : ''}`}
               ref={dropdownRef}
             >
-              <div 
+              <div
                 className="dropdown-header"
                 onClick={(e) => {
                   e.stopPropagation();
                   setIsDropdownOpen(!isDropdownOpen);
                 }}
               >
-                <span style={{ color: selectedYear ? 'var(--primary-orange)' : '' }}>
+                <span
+                  style={{ color: selectedYear ? 'var(--primary-orange)' : '' }}
+                >
                   {selectedYear || 'Year'}
                 </span>
                 <i className="fas fa-chevron-down"></i>
               </div>
-              <ul className={`dropdown-list ${isDropdownOpen ? '' : 'is-hidden'}`}>
-                <li 
+              <ul
+                className={`dropdown-list ${isDropdownOpen ? '' : 'is-hidden'}`}
+              >
+                <li
                   className="dropdown-item"
                   onClick={() => {
                     setSelectedYear('');
@@ -149,8 +152,8 @@ export function CatalogPage({ onMovieClick, onWatchTrailer }) {
                 >
                   Year
                 </li>
-                {years.map(year => (
-                  <li 
+                {years.map((year) => (
+                  <li
                     key={year}
                     className="dropdown-item"
                     onClick={() => {
@@ -181,10 +184,10 @@ export function CatalogPage({ onMovieClick, onWatchTrailer }) {
             </div>
           ) : (
             <div className="movie-grid-container">
-              {movies.map(movie => (
-                <MovieCard 
-                  key={movie.id} 
-                  movie={movie} 
+              {movies.map((movie) => (
+                <MovieCard
+                  key={movie.id}
+                  movie={movie}
                   onClick={handleCardClick}
                 />
               ))}
@@ -195,7 +198,7 @@ export function CatalogPage({ onMovieClick, onWatchTrailer }) {
 
       <section className="pagination-section">
         <div className="container">
-          <Pagination 
+          <Pagination
             totalPages={totalPages}
             currentPage={currentPage}
             onPageChange={handlePageChange}

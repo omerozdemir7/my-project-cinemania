@@ -1,12 +1,8 @@
-// src/components/layout/Header.jsx
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 const logo = `${import.meta.env.BASE_URL}img/logo.png`;
 const sprite = `${import.meta.env.BASE_URL}img/symbol-defs.svg`;
-
-
-
 
 export function Header({ onLoginClick }) {
   const { user, logout, resetPassword } = useAuth();
@@ -61,7 +57,7 @@ export function Header({ onLoginClick }) {
       }
     }
   };
-  
+
   const handleLanguageChange = (langCode) => {
     const cookieValue = `/auto/${langCode}`;
     document.cookie = `googtrans=${cookieValue}; path=/;`;
@@ -81,7 +77,10 @@ export function Header({ onLoginClick }) {
 
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (isAccountDropdownOpen && !e.target.closest('#user-account-container')) {
+      if (
+        isAccountDropdownOpen &&
+        !e.target.closest('#user-account-container')
+      ) {
         setIsAccountDropdownOpen(false);
         setIsLanguagesOpen(false);
       }
@@ -100,20 +99,34 @@ export function Header({ onLoginClick }) {
         </Link>
 
         <nav className={`main-nav ${isMenuOpen ? 'is-open' : ''}`}>
-          <button className="mobile-nav-close" onClick={closeMenu}>&times;</button>
+          <button className="mobile-nav-close" onClick={closeMenu}>
+            &times;
+          </button>
           <ul>
             <li>
-              <Link to="/" className={`nav-link ${isActive('/')}`} onClick={closeMenu}>
+              <Link
+                to="/"
+                className={`nav-link ${isActive('/')}`}
+                onClick={closeMenu}
+              >
                 HOME
               </Link>
             </li>
             <li>
-              <Link to="/catalog" className={`nav-link ${isActive('/catalog')}`} onClick={closeMenu}>
+              <Link
+                to="/catalog"
+                className={`nav-link ${isActive('/catalog')}`}
+                onClick={closeMenu}
+              >
                 CATALOG
               </Link>
             </li>
             <li>
-              <Link to="/library" className={`nav-link ${isActive('/library')}`} onClick={closeMenu}>
+              <Link
+                to="/library"
+                className={`nav-link ${isActive('/library')}`}
+                onClick={closeMenu}
+              >
                 MY LIBRARY
               </Link>
             </li>
@@ -126,9 +139,12 @@ export function Header({ onLoginClick }) {
               Login / Register
             </button>
           ) : (
-            <div id="user-account-container" className="user-dropdown-container">
-              <button 
-                id="btn-account" 
+            <div
+              id="user-account-container"
+              className="user-dropdown-container"
+            >
+              <button
+                id="btn-account"
                 className="nav-link account-btn"
                 onClick={(e) => {
                   e.stopPropagation();
@@ -136,18 +152,24 @@ export function Header({ onLoginClick }) {
                 }}
               >
                 <span>My Account</span>
-                <i className="fas fa-chevron-down" style={{ marginLeft: '5px', fontSize: '0.8em' }}></i>
+                <i
+                  className="fas fa-chevron-down"
+                  style={{ marginLeft: '5px', fontSize: '0.8em' }}
+                ></i>
               </button>
 
-              <div id="account-dropdown" className={`dropdown-content ${isAccountDropdownOpen ? 'show' : ''}`}>
+              <div
+                id="account-dropdown"
+                className={`dropdown-content ${isAccountDropdownOpen ? 'show' : ''}`}
+              >
                 <div className="dropdown-user-info">
                   <span id="dropdown-email">{user.email}</span>
                 </div>
                 <hr />
 
                 <div className="submenu-wrapper">
-                  <button 
-                    id="btn-languages" 
+                  <button
+                    id="btn-languages"
                     className={`dropdown-item submenu-trigger ${isLanguagesOpen ? 'open' : ''}`}
                     onClick={(e) => {
                       e.stopPropagation();
@@ -161,31 +183,48 @@ export function Header({ onLoginClick }) {
                     <i className="fas fa-chevron-right arrow-icon"></i>
                   </button>
 
-                  <div id="languages-list" className={`submenu-content ${isLanguagesOpen ? 'show' : ''}`}>
-                    {languages.map(lang => (
-                      <a 
-                        href="#" 
+                  <div
+                    id="languages-list"
+                    className={`submenu-content ${isLanguagesOpen ? 'show' : ''}`}
+                  >
+                    {languages.map((lang) => (
+                      <a
+                        href="#"
                         key={lang.code}
-                        className="dropdown-item lang-opt" 
+                        className="dropdown-item lang-opt"
                         data-val={lang.code}
                         onClick={(e) => {
                           e.preventDefault();
                           handleLanguageChange(lang.code);
                         }}
                       >
-                        <img className="flag-icon" src={`https://flagcdn.com/w20/${lang.flag}.png`} alt={lang.name} />
+                        <img
+                          className="flag-icon"
+                          src={`https://flagcdn.com/w20/${lang.flag}.png`}
+                          alt={lang.name}
+                        />
                         {lang.name}
                       </a>
                     ))}
                   </div>
                 </div>
-                
-                <a href="#" className="dropdown-item" id="btn-change-password" onClick={handlePasswordReset}>
+
+                <a
+                  href="#"
+                  className="dropdown-item"
+                  id="btn-change-password"
+                  onClick={handlePasswordReset}
+                >
                   <i className="fas fa-key"></i>
                   <span>Change Password</span>
                 </a>
 
-                <a href="#" className="dropdown-item" id="btn-logout" onClick={handleLogout}>
+                <a
+                  href="#"
+                  className="dropdown-item"
+                  id="btn-logout"
+                  onClick={handleLogout}
+                >
                   <i className="fas fa-sign-out-alt"></i>
                   <span>Logout</span>
                 </a>
@@ -217,7 +256,9 @@ export function Header({ onLoginClick }) {
         </div>
       </div>
 
-      {isMenuOpen && <div className="mobile-overlay active" onClick={closeMenu}></div>}
+      {isMenuOpen && (
+        <div className="mobile-overlay active" onClick={closeMenu}></div>
+      )}
     </header>
   );
 }

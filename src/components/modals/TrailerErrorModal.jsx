@@ -1,4 +1,3 @@
-// src/components/modals/TrailerErrorModal.jsx
 import React, { useEffect } from 'react';
 
 export function TrailerErrorModal({ isOpen, onClose }) {
@@ -22,9 +21,15 @@ export function TrailerErrorModal({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (
-    <div className="modal-backdrop" id="trailer-error-backdrop" onClick={handleBackdropClick}>
+    <div
+      className="modal-backdrop"
+      id="trailer-error-backdrop"
+      onClick={handleBackdropClick}
+    >
       <div className="modal-window trailer-error-window">
-        <button type="button" className="modal-close-btn" onClick={onClose}>&times;</button>
+        <button type="button" className="modal-close-btn" onClick={onClose}>
+          &times;
+        </button>
 
         <div className="trailer-error-content">
           <div className="trailer-error-text">
@@ -34,11 +39,10 @@ export function TrailerErrorModal({ isOpen, onClose }) {
           </div>
 
           <div className="trailer-error-image">
-           <img
-  src={`${import.meta.env.BASE_URL}img/trailer-modal.png`}
-  alt="No Trailer"
-/>
-
+            <img
+              src={`${import.meta.env.BASE_URL}img/trailer-modal.png`}
+              alt="No Trailer"
+            />
           </div>
         </div>
       </div>

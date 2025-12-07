@@ -1,7 +1,5 @@
-// trailer-modal.js
 import { fetchMovieVideos } from './movies-data.js';
 
-// === 1. TRAILER MODALINI AÇ ===
 export function openTrailerModal(videoKey) {
   const backdrop = document.getElementById('trailer-modal-backdrop');
   if (!backdrop) return;
@@ -20,6 +18,7 @@ export function openTrailerModal(videoKey) {
   backdrop.onclick = (e) => {
     if (e.target === backdrop) closeTrailerModal();
   };
+
   const onEsc = (e) => {
     if (e.key === 'Escape') {
       closeTrailerModal();
@@ -29,7 +28,6 @@ export function openTrailerModal(videoKey) {
   window.addEventListener('keydown', onEsc);
 }
 
-// === 2. TRAILER MODALINI KAPAT ===
 export function closeTrailerModal() {
   const backdrop = document.getElementById('trailer-modal-backdrop');
   const iframe = document.getElementById('trailer-iframe');
@@ -40,20 +38,17 @@ export function closeTrailerModal() {
   if (iframe) iframe.src = '';
 }
 
-// === 3. "WATCH TRAILER" TIKLAMA YÖNETİCİSİ (GÜÇLENDİRİLMİŞ) ===
 export async function onWatchTrailerClick(movieId) {
   try {
     const data = await fetchMovieVideos(movieId);
-    
-    // 1. Önce "Trailer" tipindeki videoyu ara
+
     let trailer = data?.results?.find(
-      (v) => v.type === 'Trailer' && v.site === 'YouTube'
+      (v) => v.type === 'Trailer' && v.site === 'YouTube',
     );
 
-    // 2. Eğer Trailer yoksa, "Teaser" ara (Yedek Plan)
     if (!trailer) {
       trailer = data?.results?.find(
-        (v) => v.type === 'Teaser' && v.site === 'YouTube'
+        (v) => v.type === 'Teaser' && v.site === 'YouTube',
       );
     }
 
@@ -68,7 +63,6 @@ export async function onWatchTrailerClick(movieId) {
   }
 }
 
-// === 4. TRAILER HATA MODALINI AÇ ===
 export function openTrailerErrorModal() {
   const backdrop = document.getElementById('trailer-error-backdrop');
   if (!backdrop) return;
@@ -86,12 +80,12 @@ export function openTrailerErrorModal() {
   backdrop.onclick = (e) => {
     if (e.target === backdrop) closeErrorModal();
   };
-  // ESC tuşu desteği
+
   const onEsc = (e) => {
-      if (e.key === 'Escape') {
-          closeErrorModal();
-          window.removeEventListener('keydown', onEsc);
-      }
+    if (e.key === 'Escape') {
+      closeErrorModal();
+      window.removeEventListener('keydown', onEsc);
+    }
   };
   window.addEventListener('keydown', onEsc);
 }

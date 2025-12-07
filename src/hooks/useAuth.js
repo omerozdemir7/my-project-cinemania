@@ -1,11 +1,10 @@
-// src/hooks/useAuth.js
 import { useState, useEffect } from 'react';
-import { 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword, 
-  signOut, 
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
   onAuthStateChanged,
-  sendPasswordResetEmail 
+  sendPasswordResetEmail,
 } from 'firebase/auth';
 import { auth } from '../utils/firebase';
 

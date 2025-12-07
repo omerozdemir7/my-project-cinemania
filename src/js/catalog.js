@@ -1,8 +1,4 @@
-// src/js/catalog.js
-import {
-  searchMovies,
-  fetchPopularMovies,
-} from './movies-data.js';
+import { searchMovies, fetchPopularMovies } from './movies-data.js';
 import { setupPagination } from './pagination.js';
 import { showLoader, hideLoader } from './loader.js';
 import { renderMovieCard, updateHeroWithMovie } from './ui-helpers.js';
@@ -15,58 +11,52 @@ const initCatalog = async () => {
   const heroSection = document.getElementById('catalog-hero');
   const heroContent = document.getElementById('catalog-hero-content');
 
-  // --- YENİ DROPDOWN ELEMENTLERİ ---
   const dropdown = document.getElementById('year-dropdown');
   const dropdownHeader = document.getElementById('dropdown-header');
   const dropdownList = document.getElementById('dropdown-list');
   const selectedYearSpan = document.getElementById('selected-year');
-  const yearInput = document.getElementById('year-input'); // Gizli input
+  const yearInput = document.getElementById('year-input');
 
-  if (!movieGrid) return; // Katalog sayfasında değilsek dur
+  if (!movieGrid) return;
 
-  // --- YILLARI LİSTEYE DOLDURMA ---
   const currentYear = new Date().getFullYear();
 
   if (dropdownList) {
-    // 1. En başa "Year (All)" seçeneği ekle (Sıfırlamak için)
     const resetLi = document.createElement('li');
-    resetLi.classList.add('dropdown-item'); // CSS'teki sınıf
-    resetLi.textContent = "Year";
-    
+    resetLi.classList.add('dropdown-item');
+    resetLi.textContent = 'Year';
+
     resetLi.onclick = () => {
-      if (yearInput) yearInput.value = ""; // Değeri temizle
+      if (yearInput) yearInput.value = '';
       if (selectedYearSpan) {
-        selectedYearSpan.textContent = "Year";
-        selectedYearSpan.style.color = ""; // Rengi sıfırla
+        selectedYearSpan.textContent = 'Year';
+        selectedYearSpan.style.color = '';
       }
       closeDropdown();
     };
     dropdownList.appendChild(resetLi);
 
-    // 2. Yılları döngü ile ekle
     for (let y = currentYear; y >= 1950; y--) {
       const li = document.createElement('li');
-      li.classList.add('dropdown-item'); // CSS'teki sınıf
+      li.classList.add('dropdown-item');
       li.textContent = y;
-      
-      // Yıla tıklanınca ne olacak?
+
       li.onclick = () => {
-        if (yearInput) yearInput.value = y; // Gizli inputa yaz
+        if (yearInput) yearInput.value = y;
         if (selectedYearSpan) {
-          selectedYearSpan.textContent = y; // Ekranda göster
-          selectedYearSpan.style.color = "var(--primary-orange)"; // Seçili olduğunu belli et
+          selectedYearSpan.textContent = y;
+          selectedYearSpan.style.color = 'var(--primary-orange)';
         }
         closeDropdown();
       };
-      
+
       dropdownList.appendChild(li);
     }
   }
 
-  // --- DROPDOWN AÇMA / KAPAMA MANTIĞI ---
   function toggleDropdown() {
-    if (dropdown) dropdown.classList.toggle('active'); // Ok işaretini döndürür
-    if (dropdownList) dropdownList.classList.toggle('is-hidden'); // Listeyi açar/kapatır
+    if (dropdown) dropdown.classList.toggle('active');
+    if (dropdownList) dropdownList.classList.toggle('is-hidden');
   }
 
   function closeDropdown() {
@@ -74,28 +64,24 @@ const initCatalog = async () => {
     if (dropdownList) dropdownList.classList.add('is-hidden');
   }
 
-  // Header'a tıklayınca aç/kapa
   if (dropdownHeader) {
     dropdownHeader.addEventListener('click', (e) => {
-      e.stopPropagation(); // Tıklamanın sayfa geneline yayılmasını engelle
+      e.stopPropagation();
       toggleDropdown();
     });
   }
 
-  // Sayfada boş yere tıklayınca kapat
   document.addEventListener('click', (e) => {
     if (dropdown && !dropdown.contains(e.target)) {
       closeDropdown();
     }
   });
 
-  // --- DEĞİŞKENLER ---
   let currentPage = 1;
   let lastQuery = '';
   let lastYear = '';
   let totalPages = 1;
 
-  // --- BAŞLANGIÇ FİLMLERİ ---
   async function loadInitialMovies() {
     showLoader();
     const data = await fetchPopularMovies(1);
@@ -109,24 +95,21 @@ const initCatalog = async () => {
     }
   }
 
-  // --- ARAMA İŞLEMİ ---
   if (form) {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const query = input.value.trim();
-      
-      // DİKKAT: Artık select yok, gizli input'tan değeri alıyoruz
-      const year = yearInput ? yearInput.value : ''; 
+
+      const year = yearInput ? yearInput.value : '';
 
       if (!query) return;
 
       currentPage = 1;
       lastQuery = query;
       lastYear = year;
-      
-      // Arama yaparken dropdown açıksa kapatalım
-      closeDropdown(); 
-      
+
+      closeDropdown();
+
       await fetchAndRenderMovies(query, year, currentPage);
     });
   }
@@ -136,8 +119,7 @@ const initCatalog = async () => {
     const data = await searchMovies(query, page, year);
     hideLoader();
 
- if (!data?.results?.length) {
-      // Görseldeki tasarıma uygun HTML yapısı
+    if (!data?.results?.length) {
       movieGrid.innerHTML = `
         <div class="no-results-container">
           <h2 class="no-results-title">OOPS...</h2>

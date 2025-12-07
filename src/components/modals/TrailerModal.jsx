@@ -1,4 +1,3 @@
-// src/components/modals/TrailerModal.jsx
 import React, { useEffect } from 'react';
 
 export function TrailerModal({ isOpen, onClose, videoKey }) {
@@ -22,9 +21,18 @@ export function TrailerModal({ isOpen, onClose, videoKey }) {
   if (!isOpen) return null;
 
   return (
-    <div className="modal-backdrop" id="trailer-modal-backdrop" onClick={handleBackdropClick}>
+    <div
+      className="modal-backdrop"
+      id="trailer-modal-backdrop"
+      onClick={handleBackdropClick}
+    >
       <div className="modal-window trailer-modal-content">
-        <button type="button" className="modal-close-btn" id="trailer-modal-close-btn" onClick={onClose}>
+        <button
+          type="button"
+          className="modal-close-btn"
+          id="trailer-modal-close-btn"
+          onClick={onClose}
+        >
           &times;
         </button>
 

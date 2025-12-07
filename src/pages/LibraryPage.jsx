@@ -1,4 +1,3 @@
-// src/pages/LibraryPage.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { HeroSection } from '../components/sections/HeroSection';
@@ -44,21 +43,21 @@ export function LibraryPage({ onMovieClick, onWatchTrailer }) {
     }
 
     setLoading(true);
-    
+
     try {
-      const promises = library.map(id => fetchMovieDetails(id));
+      const promises = library.map((id) => fetchMovieDetails(id));
       const movies = await Promise.all(promises);
-      const validMovies = movies.filter(m => m !== null);
-      
+      const validMovies = movies.filter((m) => m !== null);
+
       setAllMovies(validMovies);
       setFilteredMovies(validMovies);
-      
+
       if (validMovies.length > 0) {
         setHeroMovieId(validMovies[0].id);
         extractGenres(validMovies);
       }
     } catch (error) {
-      console.error("Kütüphane yüklenirken hata:", error);
+      console.error('Kütüphane yüklenirken hata:', error);
     } finally {
       setLoading(false);
     }
@@ -66,10 +65,10 @@ export function LibraryPage({ onMovieClick, onWatchTrailer }) {
 
   const extractGenres = (movies) => {
     const genresMap = new Map();
-    
-    movies.forEach(movie => {
+
+    movies.forEach((movie) => {
       if (movie && movie.genres && Array.isArray(movie.genres)) {
-        movie.genres.forEach(g => {
+        movie.genres.forEach((g) => {
           if (g && g.id && g.name) {
             genresMap.set(g.id, g.name);
           }
@@ -88,10 +87,11 @@ export function LibraryPage({ onMovieClick, onWatchTrailer }) {
     if (genreId === 'all') {
       setFilteredMovies(allMovies);
     } else {
-      const filtered = allMovies.filter(movie => 
-        movie.genres && 
-        Array.isArray(movie.genres) &&
-        movie.genres.some(g => g.id.toString() === genreId.toString())
+      const filtered = allMovies.filter(
+        (movie) =>
+          movie.genres &&
+          Array.isArray(movie.genres) &&
+          movie.genres.some((g) => g.id.toString() === genreId.toString()),
       );
       setFilteredMovies(filtered);
     }
@@ -104,7 +104,9 @@ export function LibraryPage({ onMovieClick, onWatchTrailer }) {
 
   const getSelectedGenreName = () => {
     if (selectedGenre === 'all') return 'Genre';
-    const genre = genres.find(g => g.id.toString() === selectedGenre.toString());
+    const genre = genres.find(
+      (g) => g.id.toString() === selectedGenre.toString(),
+    );
     return genre ? genre.name : 'Genre';
   };
 
@@ -112,8 +114,8 @@ export function LibraryPage({ onMovieClick, onWatchTrailer }) {
 
   return (
     <>
-      <HeroSection 
-        movieId={heroMovieId} 
+      <HeroSection
+        movieId={heroMovieId}
         onWatchTrailer={onWatchTrailer}
         onMoreDetails={onMovieClick}
       >
@@ -126,21 +128,25 @@ export function LibraryPage({ onMovieClick, onWatchTrailer }) {
             <div className="empty-library">
               <p>OOPS...</p>
               <p>You haven't added any movies yet.</p>
-              <Link 
-                to="/catalog" 
-                className="btn-modal-add" 
-                style={{ display: 'inline-block', marginTop: '20px', textDecoration: 'none' }}
+              <Link
+                to="/catalog"
+                className="btn-modal-add"
+                style={{
+                  display: 'inline-block',
+                  marginTop: '20px',
+                  textDecoration: 'none',
+                }}
               >
                 Go to Catalog
               </Link>
             </div>
           ) : (
             <>
-              <div 
+              <div
                 className={`genre-filter-container ${isDropdownOpen ? 'is-open' : ''}`}
                 ref={dropdownRef}
               >
-                <div 
+                <div
                   className="genre-header"
                   onClick={(e) => {
                     e.stopPropagation();
@@ -150,15 +156,17 @@ export function LibraryPage({ onMovieClick, onWatchTrailer }) {
                   <span>{getSelectedGenreName()}</span>
                   <i className="fas fa-chevron-down"></i>
                 </div>
-                <div className={`genre-list ${isDropdownOpen ? '' : 'is-hidden'}`}>
-                  <div 
+                <div
+                  className={`genre-list ${isDropdownOpen ? '' : 'is-hidden'}`}
+                >
+                  <div
                     className={`genre-item ${selectedGenre === 'all' ? 'active' : ''}`}
                     onClick={() => handleGenreChange('all')}
                   >
                     All Genres
                   </div>
-                  {genres.map(genre => (
-                    <div 
+                  {genres.map((genre) => (
+                    <div
                       key={genre.id}
                       className={`genre-item ${selectedGenre === genre.id.toString() ? 'active' : ''}`}
                       onClick={() => handleGenreChange(genre.id.toString())}
@@ -170,15 +178,21 @@ export function LibraryPage({ onMovieClick, onWatchTrailer }) {
               </div>
 
               {filteredMovies.length === 0 ? (
-                <p style={{ color: 'white', textAlign: 'center', gridColumn: '1/-1' }}>
+                <p
+                  style={{
+                    color: 'white',
+                    textAlign: 'center',
+                    gridColumn: '1/-1',
+                  }}
+                >
                   No movies found for this genre.
                 </p>
               ) : (
                 <div className="movie-grid-container">
-                  {filteredMovies.map(movie => (
-                    <MovieCard 
-                      key={movie.id} 
-                      movie={movie} 
+                  {filteredMovies.map((movie) => (
+                    <MovieCard
+                      key={movie.id}
+                      movie={movie}
                       onClick={handleCardClick}
                     />
                   ))}

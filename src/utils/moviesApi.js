@@ -1,5 +1,3 @@
-// src/utils/moviesApi.js
-
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 const BASE_URL = 'https://api.themoviedb.org/3';
 const IMG_URL = 'https://image.tmdb.org/t/p/w500';
@@ -8,9 +6,9 @@ const IMG_ORIGINAL_URL = 'https://image.tmdb.org/t/p/original';
 async function fetchFromAPI(endpoint, params = {}, lang = 'en-US') {
   const url = new URL(`${BASE_URL}${endpoint}`);
   url.searchParams.append('api_key', API_KEY);
-  
+
   if (lang) {
-    url.searchParams.append('language', lang); 
+    url.searchParams.append('language', lang);
   }
 
   for (const key in params) {
@@ -56,11 +54,15 @@ export async function fetchMovieVideos(id) {
 }
 
 export function getImageUrl(path) {
-  return path ? `${IMG_URL}${path}` : 'https://via.placeholder.com/500x750?text=No+Poster';
+  return path
+    ? `${IMG_URL}${path}`
+    : 'https://via.placeholder.com/500x750?text=No+Poster';
 }
 
 export function getOriginalImageUrl(path) {
-  return path ? `${IMG_ORIGINAL_URL}${path}` : 'https://via.placeholder.com/1920x1080?text=No+Image';
+  return path
+    ? `${IMG_ORIGINAL_URL}${path}`
+    : 'https://via.placeholder.com/1920x1080?text=No+Image';
 }
 
 export function getBackdropUrl(path) {
