@@ -1,9 +1,6 @@
 # 🎬 Cinemania — React Movie App
 
 ---
-
-## 🇹🇷 Türkçe
-
 **Cinemania**, React ile geliştirilmiş modern bir film keşif ve kişisel film kütüphanesi uygulamasıdır.  
 Kullanıcılar filmleri keşfedebilir, detaylarını inceleyebilir, izleme platformlarını görebilir ve kendi film kütüphanelerini yönetebilir.
 
