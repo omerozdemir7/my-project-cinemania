@@ -31,8 +31,7 @@ export function TeamModal({ isOpen, onClose }) {
           &times;
         </button>
 
-        <h2 className="team-title">Our Dream Team</h2>
-        <p className="team-subtitle">The creative minds behind Cinemania</p>
+        
 
         <div className="team-list">
           <div className="team-member">

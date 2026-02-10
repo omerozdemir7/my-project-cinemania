@@ -6,7 +6,7 @@ import {
 } from '../../utils/moviesApi';
 import { useLibrary } from '../../hooks/useLibrary';
 
-export function MovieDetailsModal({ isOpen, onClose, movieId }) {
+export function MovieDetailsModal({ isOpen, onClose, movieId, onRequireLogin }) {
   const [movie, setMovie] = useState(null);
   const [providers, setProviders] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -40,7 +40,32 @@ export function MovieDetailsModal({ isOpen, onClose, movieId }) {
       }
     } catch (error) {
       console.error('Library Error:', error);
-      alert('Bir hata oluştu. Giriş yapmamış olabilir misiniz?');
+      const code = typeof error?.code === 'string' ? error.code : '';
+
+      if (code.includes('login-required')) {
+        if (typeof onRequireLogin === 'function') {
+          onClose();
+          onRequireLogin();
+          return;
+        }
+
+        alert('Kütüphaneye film eklemek için giriş yapmalısınız.');
+        return;
+      }
+
+      if (code.includes('permission-denied')) {
+        alert(
+          'Firebase Firestore izinleri kısıtlıyor. Firestore Rules (güvenlik kuralları) kısmını kontrol edin.',
+        );
+        return;
+      }
+
+      if (code.includes('unauthenticated')) {
+        alert('Oturum doğrulanamadı. Lütfen tekrar giriş yapın.');
+        return;
+      }
+
+      alert('Kütüphane işlemi sırasında bir hata oluştu.');
     }
   };
 

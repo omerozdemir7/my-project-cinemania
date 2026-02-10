@@ -133,6 +133,7 @@ function App() {
           isOpen={isMovieModalOpen}
           onClose={() => setIsMovieModalOpen(false)}
           movieId={selectedMovieId}
+          onRequireLogin={() => setIsLoginModalOpen(true)}
         />
 
         <TrailerModal

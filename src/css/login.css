@@ -36,6 +36,7 @@
   padding: 8px 20px;
   border-radius: 4px;
   border: none;
+  border-bottom: none !important;
   font-weight: 600;
   cursor: pointer;
   transition:
@@ -48,6 +49,8 @@
 #btn-login:hover {
   background-color: var(--primary-hover);
   transform: scale(1.05);
+  color: #fff !important;
+  border-bottom: none !important;
 }
 
 #btn-logout {
@@ -316,6 +319,7 @@
 #auth-form input:focus {
   background-color: #ffffff;
   border-bottom: 2px solid var(--primary-color);
+  color: #111111;
 }
 
 #auth-form input::placeholder {
@@ -338,6 +342,11 @@
 
 #auth-submit-btn:hover {
   background-color: var(--primary-hover);
+}
+
+#auth-submit-btn:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
 }
 
 .auth-switch-text {

@@ -1,61 +1,61 @@
 {
-  "hash": "766daef8",
-  "configHash": "d6875388",
-  "lockfileHash": "2b5154e7",
-  "browserHash": "9679f225",
+  "hash": "dd62a04a",
+  "configHash": "b469586c",
+  "lockfileHash": "da324dd4",
+  "browserHash": "851b5fd2",
   "optimized": {
     "react": {
       "src": "../../node_modules/react/index.js",
       "file": "react.js",
-      "fileHash": "de8405ba",
+      "fileHash": "f9ae8747",
       "needsInterop": true
     },
     "react-dom": {
       "src": "../../node_modules/react-dom/index.js",
       "file": "react-dom.js",
-      "fileHash": "21fc0cf4",
+      "fileHash": "f692a7da",
       "needsInterop": true
     },
     "react/jsx-dev-runtime": {
       "src": "../../node_modules/react/jsx-dev-runtime.js",
       "file": "react_jsx-dev-runtime.js",
-      "fileHash": "6d316286",
+      "fileHash": "1f614aef",
       "needsInterop": true
     },
     "react/jsx-runtime": {
       "src": "../../node_modules/react/jsx-runtime.js",
       "file": "react_jsx-runtime.js",
-      "fileHash": "0b969388",
+      "fileHash": "5ee40d56",
       "needsInterop": true
     },
     "firebase/app": {
       "src": "../../node_modules/firebase/app/dist/esm/index.esm.js",
       "file": "firebase_app.js",
-      "fileHash": "18969c0c",
+      "fileHash": "79510a44",
       "needsInterop": false
     },
     "firebase/auth": {
       "src": "../../node_modules/firebase/auth/dist/esm/index.esm.js",
       "file": "firebase_auth.js",
-      "fileHash": "9eb29930",
+      "fileHash": "02fe6dd2",
       "needsInterop": false
     },
     "firebase/firestore": {
       "src": "../../node_modules/firebase/firestore/dist/esm/index.esm.js",
       "file": "firebase_firestore.js",
-      "fileHash": "cb28c7ab",
+      "fileHash": "c0a90796",
       "needsInterop": false
     },
     "react-dom/client": {
       "src": "../../node_modules/react-dom/client.js",
       "file": "react-dom_client.js",
-      "fileHash": "664c04ed",
+      "fileHash": "29489c0d",
       "needsInterop": true
     },
     "react-router-dom": {
       "src": "../../node_modules/react-router-dom/dist/index.mjs",
       "file": "react-router-dom.js",
-      "fileHash": "0d8c5380",
+      "fileHash": "f54455dc",
       "needsInterop": false
     }
   },

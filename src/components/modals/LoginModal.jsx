@@ -68,7 +68,12 @@ export function LoginModal({ isOpen, onClose }) {
               onChange={(e) => setPassword(e.target.value)}
             />
 
-            <button type="submit" className="btn-primary" disabled={loading}>
+            <button
+              type="submit"
+              id="auth-submit-btn"
+              className="btn btn-primary"
+              disabled={loading}
+            >
               {loading ? 'Please wait...' : isLoginMode ? 'Sign In' : 'Sign Up'}
             </button>
           </form>
