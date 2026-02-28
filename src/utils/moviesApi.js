@@ -92,7 +92,7 @@ export function getImageUrl(path, size = 'w500') {
   return buildTmdbImageUrl(path, size) || POSTER_PLACEHOLDER;
 }
 
-export function getPosterSrcSet(path, sizes = ['w342', 'w500', 'w780']) {
+export function getPosterSrcSet(path, sizes = ['w342', 'w500']) {
   return buildTmdbSrcSet(path, sizes);
 }
 

@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { getFirebaseAuth, getFirebaseAuthModule } from '../utils/firebase';
 
-export function useAuth() {
+export function useAuth(options = {}) {
+  const { enabled = true } = options;
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -9,6 +10,11 @@ export function useAuth() {
   const authModuleRef = useRef(null);
 
   useEffect(() => {
+    if (!enabled) {
+      setLoading(false);
+      return () => {};
+    }
+
     let isMounted = true;
     let unsubscribe = () => {};
 
@@ -43,7 +49,7 @@ export function useAuth() {
       isMounted = false;
       unsubscribe();
     };
-  }, []);
+  }, [enabled]);
 
   const withAuth = async (callback) => {
     const auth = authRef.current || (await getFirebaseAuth());

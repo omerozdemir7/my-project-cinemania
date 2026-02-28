@@ -28,7 +28,8 @@ const LANGUAGES = [
 ];
 
 export function Header({ onLoginClick }) {
-  const { user, logout, resetPassword } = useAuth();
+  const [isAuthEnabled, setIsAuthEnabled] = useState(false);
+  const { user, logout, resetPassword } = useAuth({ enabled: isAuthEnabled });
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false);
@@ -45,6 +46,10 @@ export function Header({ onLoginClick }) {
     }
   };
 
+  const enableAuth = () => {
+    setIsAuthEnabled(true);
+  };
+
   const closeMenu = () => {
     setIsMenuOpen(false);
   };
@@ -57,6 +62,7 @@ export function Header({ onLoginClick }) {
 
   const handlePasswordReset = async (e) => {
     if (e) e.preventDefault();
+    enableAuth();
 
     if (user && user.email) {
       try {
@@ -69,6 +75,8 @@ export function Header({ onLoginClick }) {
   };
 
   const handleLanguageChange = async (langCode) => {
+    enableAuth();
+
     try {
       await loadGoogleTranslateScript();
     } catch (error) {
@@ -78,6 +86,30 @@ export function Header({ onLoginClick }) {
     setGoogleTranslateCookie(langCode);
     window.location.reload();
   };
+
+  useEffect(() => {
+    const enableAuthOnInteraction = () => {
+      setIsAuthEnabled(true);
+    };
+
+    document.addEventListener('pointerdown', enableAuthOnInteraction, {
+      once: true,
+      passive: true,
+    });
+    document.addEventListener('keydown', enableAuthOnInteraction, {
+      once: true,
+    });
+
+    const idleTimer = window.setTimeout(() => {
+      setIsAuthEnabled(true);
+    }, 5000);
+
+    return () => {
+      document.removeEventListener('pointerdown', enableAuthOnInteraction);
+      document.removeEventListener('keydown', enableAuthOnInteraction);
+      window.clearTimeout(idleTimer);
+    };
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -195,7 +227,14 @@ export function Header({ onLoginClick }) {
 
         <div className="auth-buttons">
           {!user ? (
-            <button id="btn-login" className="nav-link" onClick={onLoginClick}>
+            <button
+              id="btn-login"
+              className="nav-link"
+              onClick={() => {
+                enableAuth();
+                onLoginClick();
+              }}
+            >
               Login / Register
             </button>
           ) : (

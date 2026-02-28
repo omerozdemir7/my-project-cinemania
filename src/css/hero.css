@@ -53,9 +53,7 @@
   color: var(--primary-white);
   position: relative;
   z-index: 70;
-  transition:
-    right 360ms ease,
-    max-width 360ms ease;
+  min-height: 360px;
 }
 
 .hero-content h1,
@@ -74,12 +72,62 @@
   color: #e0e0e0;
   max-width: 500px;
   margin-bottom: 32px;
+  min-height: 6.4em;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .hero-buttons {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
+  min-height: 54px;
+}
+
+.hero-stars {
+  min-height: 20px;
+}
+
+.hero-skeleton-title {
+  color: transparent;
+  border-radius: 8px;
+  max-width: 80%;
+  background: linear-gradient(90deg, #2a2a2a 25%, #363636 50%, #2a2a2a 75%);
+  background-size: 200% 100%;
+  animation: hero-skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+.hero-skeleton-text {
+  color: transparent;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #2a2a2a 25%, #363636 50%, #2a2a2a 75%);
+  background-size: 200% 100%;
+  animation: hero-skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+.hero-skeleton-btn {
+  width: 170px;
+  height: 48px;
+  border-radius: 28px;
+  background: linear-gradient(90deg, #2a2a2a 25%, #363636 50%, #2a2a2a 75%);
+  background-size: 200% 100%;
+  animation: hero-skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+.hero-skeleton-btn-secondary {
+  opacity: 0.75;
+}
+
+@keyframes hero-skeleton-pulse {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 @media (min-width: 768px) {
@@ -95,6 +143,7 @@
   .hero-content {
     max-width: 62%;
     right: 0;
+    min-height: 420px;
   }
   .hero-content h1,
   .hero-title {
@@ -104,6 +153,7 @@
   .hero-content p,
   .hero-description {
     font-size: 15px;
+    min-height: 6.6em;
   }
 
   .hero-buttons {
@@ -133,5 +183,6 @@
   .hero-content p,
   .hero-description {
     font-size: 16px;
+    min-height: 6.8em;
   }
 }

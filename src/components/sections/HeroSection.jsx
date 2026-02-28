@@ -84,7 +84,7 @@ export function HeroSection({
 
   const backdropPath = movie?.backdrop_path || movie?.poster_path;
   const heroImageSrc = getBackdropUrl(backdropPath, 'w780');
-  const heroImageSrcSet = getBackdropSrcSet(backdropPath, ['w780', 'w1280']);
+  const heroImageSrcSet = getBackdropSrcSet(backdropPath, ['w500', 'w780']);
 
   const renderHeroMedia = () => {
     if (!backdropPath) return null;
@@ -94,7 +94,7 @@ export function HeroSection({
         <img
           src={heroImageSrc}
           srcSet={heroImageSrcSet || undefined}
-          sizes="100vw"
+          sizes="(max-width: 768px) 100vw, 780px"
           alt=""
           className="hero-bg-image"
           fetchPriority="high"
@@ -121,7 +121,21 @@ export function HeroSection({
       <section className="hero-section">
         <div className="container hero-container">
           <div className="hero-content">
-            <h1 className="hero-title">Loading...</h1>
+            <h1 className="hero-title hero-skeleton-title" aria-hidden="true">
+              Loading title
+            </h1>
+            <div className="star-rating hero-stars" aria-hidden="true">
+              {Array.from({ length: 5 }).map((_, index) => (
+                <i key={index} className="fa-star far"></i>
+              ))}
+            </div>
+            <p className="hero-description hero-skeleton-text" aria-hidden="true">
+              Loading overview text for movie hero section.
+            </p>
+            <div className="hero-buttons" aria-hidden="true">
+              <span className="hero-skeleton-btn"></span>
+              <span className="hero-skeleton-btn hero-skeleton-btn-secondary"></span>
+            </div>
           </div>
         </div>
       </section>
