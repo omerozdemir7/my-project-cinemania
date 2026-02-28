@@ -1,8 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+
 const logo = `${import.meta.env.BASE_URL}img/logo.png`;
 const sprite = `${import.meta.env.BASE_URL}img/symbol-defs.svg`;
+
+const LANGUAGES = [
+  { code: 'tr', name: 'Turkish', flag: 'tr' },
+  { code: 'fr', name: 'Francais', flag: 'fr' },
+  { code: 'de', name: 'Deutsch', flag: 'de' },
+  { code: 'en', name: 'English', flag: 'gb' },
+  { code: 'es', name: 'Espanol', flag: 'es' },
+  { code: 'it', name: 'Italiano', flag: 'it' },
+  { code: 'pt', name: 'Portugues', flag: 'pt' },
+  { code: 'ru', name: 'Russian', flag: 'ru' },
+  { code: 'ar', name: 'Arabic', flag: 'sa' },
+  { code: 'fa', name: 'Persian', flag: 'ir' },
+  { code: 'zh', name: 'Chinese', flag: 'cn' },
+  { code: 'ja', name: 'Japanese', flag: 'jp' },
+  { code: 'ko', name: 'Korean', flag: 'kr' },
+];
 
 export function Header({ onLoginClick }) {
   const { user, logout, resetPassword } = useAuth();
@@ -10,22 +27,6 @@ export function Header({ onLoginClick }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false);
   const [isLanguagesOpen, setIsLanguagesOpen] = useState(false);
-
-  const languages = [
-    { code: 'tr', name: 'Turkish', flag: 'tr' },
-    { code: 'fr', name: 'Français', flag: 'fr' },
-    { code: 'de', name: 'Deutsch', flag: 'de' },
-    { code: 'en', name: 'English', flag: 'gb' },
-    { code: 'es', name: 'Español', flag: 'es' },
-    { code: 'it', name: 'Italiano', flag: 'it' },
-    { code: 'pt', name: 'Português', flag: 'pt' },
-    { code: 'ru', name: 'Русский', flag: 'ru' },
-    { code: 'ar', name: 'العربية', flag: 'sa' },
-    { code: 'fa', name: 'فارسی', flag: 'ir' },
-    { code: 'zh', name: '中文 (Chinese)', flag: 'cn' },
-    { code: 'ja', name: '日本語 (Japanese)', flag: 'jp' },
-    { code: 'ko', name: '한국어 (Korean)', flag: 'kr' },
-  ];
 
   const isActive = (path) => {
     return location.pathname === path ? 'active' : '';
@@ -42,12 +43,15 @@ export function Header({ onLoginClick }) {
     setIsMenuOpen(false);
   };
 
-  const handleLogout = async () => {
+  const handleLogout = async (e) => {
+    if (e) e.preventDefault();
     await logout();
     window.location.reload();
   };
 
-  const handlePasswordReset = async () => {
+  const handlePasswordReset = async (e) => {
+    if (e) e.preventDefault();
+
     if (user && user.email) {
       try {
         await resetPassword(user.email);
@@ -60,6 +64,7 @@ export function Header({ onLoginClick }) {
 
   const handleLanguageChange = (langCode) => {
     const cookieValue = `/auto/${langCode}`;
+    document.cookie = `googtrans=${cookieValue}; path=/; domain=${window.location.hostname}`;
     document.cookie = `googtrans=${cookieValue}; path=/;`;
     window.location.reload();
   };
@@ -77,10 +82,10 @@ export function Header({ onLoginClick }) {
 
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (
-        isAccountDropdownOpen &&
-        !e.target.closest('#user-account-container')
-      ) {
+      const target = e.target instanceof Element ? e.target : null;
+      if (!target) return;
+
+      if (isAccountDropdownOpen && !target.closest('#user-account-container')) {
         setIsAccountDropdownOpen(false);
         setIsLanguagesOpen(false);
       }
@@ -90,8 +95,28 @@ export function Header({ onLoginClick }) {
     return () => document.removeEventListener('click', handleClickOutside);
   }, [isAccountDropdownOpen]);
 
+  useEffect(() => {
+    const handleLanguageOptionFallback = (event) => {
+      const target = event.target instanceof Element ? event.target : null;
+      if (!target) return;
+
+      const option = target.closest('[data-lang-code]');
+      if (!option) return;
+
+      event.preventDefault();
+      const langCode = option.getAttribute('data-lang-code');
+      if (langCode) {
+        handleLanguageChange(langCode);
+      }
+    };
+
+    document.addEventListener('click', handleLanguageOptionFallback, true);
+    return () =>
+      document.removeEventListener('click', handleLanguageOptionFallback, true);
+  }, []);
+
   return (
-    <header className="site-header">
+    <header className="site-header notranslate" translate="no">
       <div className="container header-container">
         <Link to="/" className="logo" onClick={handleLogoClick}>
           <img src={logo} alt="Cinemania Logo" />
@@ -187,16 +212,14 @@ export function Header({ onLoginClick }) {
                     id="languages-list"
                     className={`submenu-content ${isLanguagesOpen ? 'show' : ''}`}
                   >
-                    {languages.map((lang) => (
-                      <a
-                        href="#"
+                    {LANGUAGES.map((lang) => (
+                      <button
+                        type="button"
                         key={lang.code}
                         className="dropdown-item lang-opt"
                         data-val={lang.code}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleLanguageChange(lang.code);
-                        }}
+                        data-lang-code={lang.code}
+                        onClick={() => handleLanguageChange(lang.code)}
                       >
                         <img
                           className="flag-icon"
@@ -204,7 +227,7 @@ export function Header({ onLoginClick }) {
                           alt={lang.name}
                         />
                         {lang.name}
-                      </a>
+                      </button>
                     ))}
                   </div>
                 </div>

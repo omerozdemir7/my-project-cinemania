@@ -47,6 +47,52 @@ function App() {
   }, []);
 
   useEffect(() => {
+    const translateLogPattern = 'translate.googleapis.com/element/log';
+
+    const originalFetch = window.fetch ? window.fetch.bind(window) : null;
+    if (originalFetch) {
+      window.fetch = (input, init) => {
+        const url = typeof input === 'string' ? input : input?.url;
+        if (typeof url === 'string' && url.includes(translateLogPattern)) {
+          return Promise.resolve(new Response('', { status: 204 }));
+        }
+
+        return originalFetch(input, init);
+      };
+    }
+
+    const originalSendBeacon =
+      typeof navigator.sendBeacon === 'function'
+        ? navigator.sendBeacon.bind(navigator)
+        : null;
+
+    if (originalSendBeacon) {
+      navigator.sendBeacon = (url, data) => {
+        if (typeof url === 'string' && url.includes(translateLogPattern)) {
+          return true;
+        }
+
+        return originalSendBeacon(url, data);
+      };
+    }
+
+    const originalXHROpen = XMLHttpRequest.prototype.open;
+    const originalXHRSend = XMLHttpRequest.prototype.send;
+
+    XMLHttpRequest.prototype.open = function (method, url, ...rest) {
+      this.__skipTranslateLogRequest =
+        typeof url === 'string' && url.includes(translateLogPattern);
+      return originalXHROpen.call(this, method, url, ...rest);
+    };
+
+    XMLHttpRequest.prototype.send = function (...args) {
+      if (this.__skipTranslateLogRequest) {
+        return;
+      }
+
+      return originalXHRSend.apply(this, args);
+    };
+
     const addGoogleTranslateScript = () => {
       if (document.querySelector('script[src*="translate.google.com"]')) return;
 
@@ -68,6 +114,19 @@ function App() {
     };
 
     addGoogleTranslateScript();
+
+    return () => {
+      if (originalFetch) {
+        window.fetch = originalFetch;
+      }
+
+      if (originalSendBeacon) {
+        navigator.sendBeacon = originalSendBeacon;
+      }
+
+      XMLHttpRequest.prototype.open = originalXHROpen;
+      XMLHttpRequest.prototype.send = originalXHRSend;
+    };
   }, []);
 
   const handleMovieClick = (movieId) => {

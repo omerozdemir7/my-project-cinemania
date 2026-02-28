@@ -14,6 +14,16 @@
   margin: 0 5px;
 }
 
-.site-footer span {
-  text-decoration: underline !important;
+.footer-link {
+  background: transparent;
+  border: none;
+  color: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+}
+
+.footer-link:hover {
+  color: var(--primary-orange);
 }

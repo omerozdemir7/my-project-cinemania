@@ -1,9 +1,29 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+
 const sprite = `${import.meta.env.BASE_URL}img/symbol-defs.svg`;
 
 export function Footer({ onTeamModalOpen }) {
+  useEffect(() => {
+    const handleTeamModalFallback = (event) => {
+      const target = event.target instanceof Element ? event.target : null;
+      if (!target) return;
+
+      const trigger = target.closest('[data-team-modal-trigger="true"]');
+      if (!trigger) return;
+
+      event.preventDefault();
+      if (typeof onTeamModalOpen === 'function') {
+        onTeamModalOpen();
+      }
+    };
+
+    document.addEventListener('click', handleTeamModalFallback, true);
+    return () =>
+      document.removeEventListener('click', handleTeamModalFallback, true);
+  }, [onTeamModalOpen]);
+
   return (
-    <footer className="site-footer">
+    <footer className="site-footer" translate="no">
       <div className="container">
         <p>
           &copy; 2025 | All Rights Reserved | Developed with
@@ -11,16 +31,16 @@ export function Footer({ onTeamModalOpen }) {
             <use xlinkHref={`${sprite}#icon-heart`}></use>
           </svg>
           by{' '}
-          <a
-            href="#"
+          <button
+            type="button"
             className="footer-link"
-            onClick={(e) => {
-              e.preventDefault();
-              onTeamModalOpen && onTeamModalOpen();
-            }}
+            data-team-modal-trigger="true"
+            onClick={() =>
+              typeof onTeamModalOpen === 'function' && onTeamModalOpen()
+            }
           >
             GoIT Students
-          </a>
+          </button>
         </p>
       </div>
     </footer>

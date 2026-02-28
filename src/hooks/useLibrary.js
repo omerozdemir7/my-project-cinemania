@@ -10,6 +10,8 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth, db } from '../utils/firebase';
 
 const LOCAL_LIBRARY_KEY = 'myLibrary';
+const FIRESTORE_DISABLED_USERS = new Set();
+let hasLoggedFirestoreFallback = false;
 
 function createLoginRequiredError() {
   const error = new Error('Login required');
@@ -50,6 +52,24 @@ function shouldDisableFirestore(error) {
   );
 }
 
+function isFirestoreDisabledForUser(uid) {
+  return typeof uid === 'string' && FIRESTORE_DISABLED_USERS.has(uid);
+}
+
+function markFirestoreDisabledForUser(uid, error) {
+  if (typeof uid === 'string' && uid) {
+    FIRESTORE_DISABLED_USERS.add(uid);
+  }
+
+  if (!hasLoggedFirestoreFallback) {
+    const code = typeof error?.code === 'string' ? error.code : 'unknown';
+    console.warn(
+      `[useLibrary] Firestore disabled (${code}). Falling back to localStorage.`,
+    );
+    hasLoggedFirestoreFallback = true;
+  }
+}
+
 export function useLibrary() {
   const [library, setLibrary] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -63,6 +83,10 @@ export function useLibrary() {
       setLibrary([]);
       setLoading(false);
       return;
+    }
+
+    if (isFirestoreDisabledForUser(user.uid)) {
+      firestoreDisabledRef.current = true;
     }
 
     if (!firestoreDisabledRef.current) {
@@ -81,9 +105,11 @@ export function useLibrary() {
           writeLocalLibrary([]);
         }
       } catch (error) {
-        console.error('[useLibrary] Firestore load failed:', error);
         if (shouldDisableFirestore(error)) {
           firestoreDisabledRef.current = true;
+          markFirestoreDisabledForUser(user.uid, error);
+        } else {
+          console.error('[useLibrary] Firestore load failed:', error);
         }
         setLibrary(readLocalLibrary());
       }
@@ -97,8 +123,8 @@ export function useLibrary() {
   useEffect(() => {
     loadLibrary();
 
-    const unsubscribe = onAuthStateChanged(auth, () => {
-      firestoreDisabledRef.current = false;
+    const unsubscribe = onAuthStateChanged(auth, (nextUser) => {
+      firestoreDisabledRef.current = isFirestoreDisabledForUser(nextUser?.uid || '');
       loadLibrary();
     });
 
@@ -125,9 +151,11 @@ export function useLibrary() {
       try {
         await setDoc(userRef, { library: arrayUnion(id) }, { merge: true });
       } catch (error) {
-        console.error('[useLibrary] Firestore add sync failed:', error);
         if (shouldDisableFirestore(error)) {
           firestoreDisabledRef.current = true;
+          markFirestoreDisabledForUser(user.uid, error);
+        } else {
+          console.error('[useLibrary] Firestore add sync failed:', error);
         }
       }
     }
@@ -150,9 +178,11 @@ export function useLibrary() {
       try {
         await setDoc(userRef, { library: arrayRemove(id) }, { merge: true });
       } catch (error) {
-        console.error('[useLibrary] Firestore remove sync failed:', error);
         if (shouldDisableFirestore(error)) {
           firestoreDisabledRef.current = true;
+          markFirestoreDisabledForUser(user.uid, error);
+        } else {
+          console.error('[useLibrary] Firestore remove sync failed:', error);
         }
       }
     }

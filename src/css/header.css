@@ -276,6 +276,11 @@ input:checked + .slider .slider-circle-container {
 font {
   background: none !important;
   box-shadow: none !important;
+  pointer-events: none !important;
+}
+
+font font {
+  pointer-events: none !important;
 }
 .goog-te-banner-frame,
 iframe.goog-te-banner-frame {
