@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import {
+  getGoogleTranslateCookieLanguage,
+  loadGoogleTranslateScript,
+  setGoogleTranslateCookie,
+} from '../../utils/googleTranslate';
 
-const logo = `${import.meta.env.BASE_URL}img/logo.png`;
+const logo56 = `${import.meta.env.BASE_URL}img/logo-56.png`;
+const logo112 = `${import.meta.env.BASE_URL}img/logo-112.png`;
 const sprite = `${import.meta.env.BASE_URL}img/symbol-defs.svg`;
 
 const LANGUAGES = [
@@ -62,10 +68,14 @@ export function Header({ onLoginClick }) {
     }
   };
 
-  const handleLanguageChange = (langCode) => {
-    const cookieValue = `/auto/${langCode}`;
-    document.cookie = `googtrans=${cookieValue}; path=/; domain=${window.location.hostname}`;
-    document.cookie = `googtrans=${cookieValue}; path=/;`;
+  const handleLanguageChange = async (langCode) => {
+    try {
+      await loadGoogleTranslateScript();
+    } catch (error) {
+      console.warn('[Header] Google Translate script failed to load:', error);
+    }
+
+    setGoogleTranslateCookie(langCode);
     window.location.reload();
   };
 
@@ -96,6 +106,13 @@ export function Header({ onLoginClick }) {
   }, [isAccountDropdownOpen]);
 
   useEffect(() => {
+    const selectedLanguage = getGoogleTranslateCookieLanguage();
+    if (selectedLanguage && selectedLanguage !== 'en') {
+      void loadGoogleTranslateScript();
+    }
+  }, []);
+
+  useEffect(() => {
     const handleLanguageOptionFallback = (event) => {
       const target = event.target instanceof Element ? event.target : null;
       if (!target) return;
@@ -115,11 +132,29 @@ export function Header({ onLoginClick }) {
       document.removeEventListener('click', handleLanguageOptionFallback, true);
   }, []);
 
+  const handleLanguagesToggle = (e) => {
+    e.stopPropagation();
+    const nextState = !isLanguagesOpen;
+    setIsLanguagesOpen(nextState);
+
+    if (nextState) {
+      void loadGoogleTranslateScript();
+    }
+  };
+
   return (
     <header className="site-header">
       <div className="container header-container">
         <Link to="/" className="logo" onClick={handleLogoClick}>
-          <img src={logo} alt="Cinemania Logo" />
+          <img
+            src={logo56}
+            srcSet={`${logo56} 56w, ${logo112} 112w`}
+            sizes="(max-width: 768px) 32px, 56px"
+            width="56"
+            height="56"
+            alt="Cinemania Logo"
+            decoding="async"
+          />
           <span>cprookie</span>
         </Link>
 
@@ -196,10 +231,7 @@ export function Header({ onLoginClick }) {
                   <button
                     id="btn-languages"
                     className={`dropdown-item submenu-trigger ${isLanguagesOpen ? 'open' : ''}`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setIsLanguagesOpen(!isLanguagesOpen);
-                    }}
+                    onClick={handleLanguagesToggle}
                   >
                     <span>
                       <i className="fas fa-globe"></i>
@@ -256,8 +288,16 @@ export function Header({ onLoginClick }) {
           )}
 
           <div className="theme-switcher">
-            <label className="switch">
-              <input type="checkbox" id="theme-toggle-checkbox" />
+            <label
+              className="switch"
+              htmlFor="theme-toggle-checkbox"
+              aria-label="Toggle dark and light theme"
+            >
+              <input
+                type="checkbox"
+                id="theme-toggle-checkbox"
+                aria-label="Toggle dark and light theme"
+              />
               <span className="slider round">
                 <svg className="icon icon-sun">
                   <use xlinkHref={`${sprite}#icon-sun`}></use>

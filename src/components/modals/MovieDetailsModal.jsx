@@ -3,6 +3,8 @@ import {
   fetchMovieDetails,
   fetchMovieProviders,
   getImageUrl,
+  getProviderLogoUrl,
+  getProviderLogoSrcSet,
 } from '../../utils/moviesApi';
 import { useLibrary } from '../../hooks/useLibrary';
 
@@ -104,6 +106,9 @@ export function MovieDetailsModal({ isOpen, onClose, movieId, onRequireLogin }) 
               src={getImageUrl(movie.poster_path)}
               alt="Movie Poster"
               className="modal-poster"
+              decoding="async"
+              width="500"
+              height="750"
             />
           </div>
 
@@ -152,10 +157,18 @@ export function MovieDetailsModal({ isOpen, onClose, movieId, onRequireLogin }) 
                   {trData.flatrate.slice(0, 5).map((provider, index) => (
                     <img
                       key={index}
-                      src={`https://image.tmdb.org/t/p/original${provider.logo_path}`}
+                      src={getProviderLogoUrl(provider.logo_path, 'w154')}
+                      srcSet={getProviderLogoSrcSet(provider.logo_path, [
+                        'w92',
+                        'w154',
+                        'w300',
+                      ])}
+                      sizes="72px"
                       alt={provider.provider_name}
                       title={`Watch on ${provider.provider_name}`}
                       className="provider-logo"
+                      loading="lazy"
+                      decoding="async"
                       onClick={() => {
                         const titleEncoded = encodeURIComponent(movie.title);
                         const pName = provider.provider_name.toLowerCase();

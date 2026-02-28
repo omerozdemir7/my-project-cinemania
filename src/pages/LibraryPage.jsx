@@ -9,7 +9,7 @@ import { fetchMovieDetails } from '../utils/moviesApi';
 export function LibraryPage({ onMovieClick, onWatchTrailer }) {
   const { library, loading: libraryLoading } = useLibrary();
   const [loading, setLoading] = useState(true);
-  const [heroMovieId, setHeroMovieId] = useState(null);
+  const [heroMovie, setHeroMovie] = useState(null);
   const [allMovies, setAllMovies] = useState([]);
   const [filteredMovies, setFilteredMovies] = useState([]);
   const [genres, setGenres] = useState([]);
@@ -37,6 +37,7 @@ export function LibraryPage({ onMovieClick, onWatchTrailer }) {
   const loadLibraryMovies = async () => {
     if (!library || library.length === 0) {
       setLoading(false);
+      setHeroMovie(null);
       setAllMovies([]);
       setFilteredMovies([]);
       return;
@@ -53,7 +54,7 @@ export function LibraryPage({ onMovieClick, onWatchTrailer }) {
       setFilteredMovies(validMovies);
 
       if (validMovies.length > 0) {
-        setHeroMovieId(validMovies[0].id);
+        setHeroMovie(validMovies[0]);
         extractGenres(validMovies);
       }
     } catch (error) {
@@ -98,7 +99,14 @@ export function LibraryPage({ onMovieClick, onWatchTrailer }) {
   };
 
   const handleCardClick = (movieId) => {
-    setHeroMovieId(movieId);
+    const selectedMovie =
+      filteredMovies.find((movie) => movie.id === movieId) ||
+      allMovies.find((movie) => movie.id === movieId);
+
+    if (selectedMovie) {
+      setHeroMovie(selectedMovie);
+    }
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -115,7 +123,7 @@ export function LibraryPage({ onMovieClick, onWatchTrailer }) {
   return (
     <>
       <HeroSection
-        movieId={heroMovieId}
+        movie={heroMovie}
         onWatchTrailer={onWatchTrailer}
         onMoreDetails={onMovieClick}
       >

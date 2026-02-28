@@ -1,40 +1,80 @@
-import { useState, useEffect } from 'react';
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-  sendPasswordResetEmail,
-} from 'firebase/auth';
-import { auth } from '../utils/firebase';
+import { useEffect, useRef, useState } from 'react';
+import { getFirebaseAuth, getFirebaseAuthModule } from '../utils/firebase';
 
 export function useAuth() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
-    });
+  const authRef = useRef(null);
+  const authModuleRef = useRef(null);
 
-    return unsubscribe;
+  useEffect(() => {
+    let isMounted = true;
+    let unsubscribe = () => {};
+
+    const initAuthState = async () => {
+      try {
+        const [auth, authModule] = await Promise.all([
+          getFirebaseAuth(),
+          getFirebaseAuthModule(),
+        ]);
+
+        if (!isMounted) return;
+
+        authRef.current = auth;
+        authModuleRef.current = authModule;
+
+        unsubscribe = authModule.onAuthStateChanged(auth, (nextUser) => {
+          if (!isMounted) return;
+          setUser(nextUser);
+          setLoading(false);
+        });
+      } catch (error) {
+        console.error('[useAuth] Firebase auth init failed:', error);
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    initAuthState();
+
+    return () => {
+      isMounted = false;
+      unsubscribe();
+    };
   }, []);
 
+  const withAuth = async (callback) => {
+    const auth = authRef.current || (await getFirebaseAuth());
+    const authModule = authModuleRef.current || (await getFirebaseAuthModule());
+
+    authRef.current = auth;
+    authModuleRef.current = authModule;
+
+    return callback(auth, authModule);
+  };
+
   const register = async (email, password) => {
-    return await createUserWithEmailAndPassword(auth, email, password);
+    return withAuth((auth, authModule) =>
+      authModule.createUserWithEmailAndPassword(auth, email, password),
+    );
   };
 
   const login = async (email, password) => {
-    return await signInWithEmailAndPassword(auth, email, password);
+    return withAuth((auth, authModule) =>
+      authModule.signInWithEmailAndPassword(auth, email, password),
+    );
   };
 
   const logout = async () => {
-    return await signOut(auth);
+    return withAuth((auth, authModule) => authModule.signOut(auth));
   };
 
   const resetPassword = async (email) => {
-    return await sendPasswordResetEmail(auth, email);
+    return withAuth((auth, authModule) =>
+      authModule.sendPasswordResetEmail(auth, email),
+    );
   };
 
   return { user, loading, register, login, logout, resetPassword };

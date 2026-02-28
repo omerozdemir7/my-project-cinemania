@@ -1,18 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { HeroSection } from '../components/sections/HeroSection';
 import { MovieCard } from '../components/MovieCard';
-import { Loader } from '../components/Loader';
 import {
   fetchTrendingMovies,
   fetchUpcomingMovies,
-  fetchMovieDetails,
-  getOriginalImageUrl,
+  getImageUrl,
+  getPosterSrcSet,
 } from '../utils/moviesApi';
 
 export function HomePage({ onMovieClick, onWatchTrailer }) {
   const [loading, setLoading] = useState(true);
-  const [heroMovieId, setHeroMovieId] = useState(null);
+  const [heroMovie, setHeroMovie] = useState(null);
   const [weeklyTrends, setWeeklyTrends] = useState([]);
   const [upcomingMovie, setUpcomingMovie] = useState(null);
 
@@ -24,30 +23,36 @@ export function HomePage({ onMovieClick, onWatchTrailer }) {
     setLoading(true);
 
     try {
-      const [dayTrends, weekTrends, upcomingData] = await Promise.all([
-        fetchTrendingMovies('day'),
-        fetchTrendingMovies('week'),
-        fetchUpcomingMovies(),
+      const dayTrendsPromise = fetchTrendingMovies('day');
+      const weekTrendsPromise = fetchTrendingMovies('week');
+      const upcomingPromise = fetchUpcomingMovies();
+
+      const [dayTrends, weekTrends] = await Promise.all([
+        dayTrendsPromise,
+        weekTrendsPromise,
       ]);
 
-      let heroMovie = null;
+      let selectedHeroMovie = null;
       if (dayTrends?.results?.length) {
         const rand = Math.floor(
           Math.random() * Math.min(5, dayTrends.results.length),
         );
-        heroMovie = dayTrends.results[rand];
+        selectedHeroMovie = dayTrends.results[rand];
       } else if (weekTrends?.results?.length) {
-        heroMovie = weekTrends.results[0];
+        selectedHeroMovie = weekTrends.results[0];
       }
 
-      if (heroMovie) {
-        setHeroMovieId(heroMovie.id);
+      if (selectedHeroMovie) {
+        setHeroMovie(selectedHeroMovie);
       }
 
       if (weekTrends?.results?.length) {
         setWeeklyTrends(weekTrends.results.slice(0, 3));
       }
 
+      setLoading(false);
+
+      const upcomingData = await upcomingPromise;
       if (upcomingData?.results?.length) {
         const rand = Math.floor(
           Math.random() * Math.min(10, upcomingData.results.length),
@@ -55,37 +60,24 @@ export function HomePage({ onMovieClick, onWatchTrailer }) {
         setUpcomingMovie(upcomingData.results[rand]);
       }
     } catch (error) {
-      console.error('Anasayfa yükleme hatası:', error);
-    } finally {
+      console.error('[HomePage] Failed to load home data:', error);
       setLoading(false);
     }
   };
 
   const handleCardClick = (movieId) => {
-    setHeroMovieId(movieId);
+    const selectedMovie = weeklyTrends.find((movie) => movie.id === movieId);
+    if (selectedMovie) {
+      setHeroMovie(selectedMovie);
+    }
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-
-  const renderStars = (vote) => {
-    const stars = Math.round((vote || 0) / 2);
-    const starElements = [];
-    for (let i = 1; i <= 5; i++) {
-      starElements.push(
-        <i
-          key={i}
-          className={`fa-star ${i <= stars ? 'fas active' : 'far'}`}
-        ></i>,
-      );
-    }
-    return starElements;
-  };
-
-  if (loading) return <Loader />;
 
   return (
     <>
       <HeroSection
-        movieId={heroMovieId}
+        movie={heroMovie}
         onWatchTrailer={onWatchTrailer}
         onMoreDetails={onMovieClick}
       />
@@ -98,6 +90,9 @@ export function HomePage({ onMovieClick, onWatchTrailer }) {
               See all
             </Link>
           </div>
+          {loading && weeklyTrends.length === 0 && (
+            <p style={{ color: 'var(--text-grey)' }}>Loading trends...</p>
+          )}
           <div className="movie-grid-container">
             {weeklyTrends.map((movie) => (
               <MovieCard
@@ -117,8 +112,14 @@ export function HomePage({ onMovieClick, onWatchTrailer }) {
             <div className="upcoming-container">
               <div className="upcoming-image">
                 <img
-                  src={getOriginalImageUrl(upcomingMovie.poster_path)}
+                  src={getImageUrl(upcomingMovie.poster_path, 'w500')}
+                  srcSet={getPosterSrcSet(upcomingMovie.poster_path)}
+                  sizes="(max-width: 768px) 45vw, 340px"
                   alt={upcomingMovie.title}
+                  width="340"
+                  height="510"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
               <div className="upcoming-info">

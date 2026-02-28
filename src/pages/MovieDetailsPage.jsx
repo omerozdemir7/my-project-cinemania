@@ -8,7 +8,9 @@ import {
   fetchMovieReviews,
   fetchMovieVideos,
   getImageUrl,
-  getOriginalImageUrl,
+  getBackdropUrl,
+  getProviderLogoUrl,
+  getProviderLogoSrcSet,
 } from '../utils/moviesApi';
 import { useLibrary } from '../hooks/useLibrary';
 import { useAuth } from '../hooks/useAuth';
@@ -299,7 +301,7 @@ export function MovieDetailsPage({ onWatchTrailer, onRequireLogin }) {
       <section
         className="movie-details-hero"
         style={{
-          backgroundImage: `linear-gradient(180deg, rgba(8,8,8,0.55) 0%, rgba(8,8,8,0.95) 100%), url('${getOriginalImageUrl(movie.backdrop_path || movie.poster_path)}')`,
+          backgroundImage: `linear-gradient(180deg, rgba(8,8,8,0.55) 0%, rgba(8,8,8,0.95) 100%), url('${getBackdropUrl(movie.backdrop_path || movie.poster_path, 'w1280')}')`,
         }}
       >
         <div className="container movie-details-hero-inner">
@@ -317,6 +319,9 @@ export function MovieDetailsPage({ onWatchTrailer, onRequireLogin }) {
                 src={getImageUrl(movie.poster_path)}
                 alt={movie.title}
                 className="movie-details-poster"
+                decoding="async"
+                width="500"
+                height="750"
               />
             </div>
 
@@ -404,10 +409,12 @@ export function MovieDetailsPage({ onWatchTrailer, onRequireLogin }) {
                   <img
                     src={
                       member.profile_path
-                        ? `https://image.tmdb.org/t/p/w300${member.profile_path}`
+                        ? `https://image.tmdb.org/t/p/w185${member.profile_path}`
                         : 'https://via.placeholder.com/300x450?text=No+Photo'
                     }
                     alt={member.name}
+                    loading="lazy"
+                    decoding="async"
                   />
                   <div className="cast-card-body">
                     <h3>{member.name}</h3>
@@ -445,12 +452,16 @@ export function MovieDetailsPage({ onWatchTrailer, onRequireLogin }) {
                     }
                   >
                     <img
-                      src={
-                        provider.logo_path
-                          ? `https://image.tmdb.org/t/p/w300${provider.logo_path}`
-                          : 'https://via.placeholder.com/300x300?text=No+Logo'
-                      }
+                      src={getProviderLogoUrl(provider.logo_path, 'w154')}
+                      srcSet={getProviderLogoSrcSet(provider.logo_path, [
+                        'w92',
+                        'w154',
+                        'w300',
+                      ])}
+                      sizes="80px"
                       alt={provider.provider_name}
+                      loading="lazy"
+                      decoding="async"
                     />
                     <span>{provider.provider_name}</span>
                   </button>

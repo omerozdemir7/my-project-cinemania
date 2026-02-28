@@ -1,13 +1,10 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
-  doc,
-  setDoc,
-  getDoc,
-  arrayUnion,
-  arrayRemove,
-} from 'firebase/firestore';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth, db } from '../utils/firebase';
+  getFirebaseAuth,
+  getFirebaseAuthModule,
+  getFirebaseDb,
+  getFirebaseFirestoreModule,
+} from '../utils/firebase';
 
 const LOCAL_LIBRARY_KEY = 'myLibrary';
 const FIRESTORE_DISABLED_USERS = new Set();
@@ -73,47 +70,82 @@ function markFirestoreDisabledForUser(uid, error) {
 export function useLibrary() {
   const [library, setLibrary] = useState([]);
   const [loading, setLoading] = useState(true);
+
   const firestoreDisabledRef = useRef(false);
+  const authRef = useRef(null);
+  const authModuleRef = useRef(null);
+  const dbRef = useRef(null);
+  const firestoreModuleRef = useRef(null);
+  const initPromiseRef = useRef(null);
+
+  const ensureFirebaseClients = async () => {
+    if (!initPromiseRef.current) {
+      initPromiseRef.current = Promise.all([
+        getFirebaseAuth(),
+        getFirebaseAuthModule(),
+        getFirebaseDb(),
+        getFirebaseFirestoreModule(),
+      ]).then(([auth, authModule, db, firestoreModule]) => {
+        authRef.current = auth;
+        authModuleRef.current = authModule;
+        dbRef.current = db;
+        firestoreModuleRef.current = firestoreModule;
+
+        return { auth, authModule, db, firestoreModule };
+      });
+    }
+
+    return initPromiseRef.current;
+  };
 
   const loadLibrary = async () => {
     setLoading(true);
-    const user = auth.currentUser;
 
-    if (!user) {
-      setLibrary([]);
-      setLoading(false);
-      return;
-    }
+    try {
+      const { auth, db, firestoreModule } = await ensureFirebaseClients();
+      const user = auth.currentUser;
 
-    if (isFirestoreDisabledForUser(user.uid)) {
-      firestoreDisabledRef.current = true;
-    }
+      if (!user) {
+        setLibrary([]);
+        setLoading(false);
+        return;
+      }
 
-    if (!firestoreDisabledRef.current) {
-      const userRef = doc(db, 'users', user.uid);
-      try {
-        const docSnap = await getDoc(userRef);
-        if (docSnap.exists()) {
-          const remoteLibrary = docSnap.data().library || [];
-          const normalized = Array.isArray(remoteLibrary)
-            ? remoteLibrary.map(Number).filter(Number.isFinite)
-            : [];
-          setLibrary(normalized);
-          writeLocalLibrary(normalized);
-        } else {
-          setLibrary([]);
-          writeLocalLibrary([]);
+      if (isFirestoreDisabledForUser(user.uid)) {
+        firestoreDisabledRef.current = true;
+      }
+
+      if (!firestoreDisabledRef.current) {
+        const userRef = firestoreModule.doc(db, 'users', user.uid);
+
+        try {
+          const docSnap = await firestoreModule.getDoc(userRef);
+          if (docSnap.exists()) {
+            const remoteLibrary = docSnap.data().library || [];
+            const normalized = Array.isArray(remoteLibrary)
+              ? remoteLibrary.map(Number).filter(Number.isFinite)
+              : [];
+            setLibrary(normalized);
+            writeLocalLibrary(normalized);
+          } else {
+            setLibrary([]);
+            writeLocalLibrary([]);
+          }
+        } catch (error) {
+          if (shouldDisableFirestore(error)) {
+            firestoreDisabledRef.current = true;
+            markFirestoreDisabledForUser(user.uid, error);
+          } else {
+            console.error('[useLibrary] Firestore load failed:', error);
+          }
+
+          setLibrary(readLocalLibrary());
         }
-      } catch (error) {
-        if (shouldDisableFirestore(error)) {
-          firestoreDisabledRef.current = true;
-          markFirestoreDisabledForUser(user.uid, error);
-        } else {
-          console.error('[useLibrary] Firestore load failed:', error);
-        }
+      } else {
         setLibrary(readLocalLibrary());
       }
-    } else {
+    } catch (error) {
+      console.error('[useLibrary] Firebase init failed:', error);
       setLibrary(readLocalLibrary());
     }
 
@@ -121,21 +153,46 @@ export function useLibrary() {
   };
 
   useEffect(() => {
-    loadLibrary();
+    let isMounted = true;
+    let unsubscribe = () => {};
 
-    const unsubscribe = onAuthStateChanged(auth, (nextUser) => {
-      firestoreDisabledRef.current = isFirestoreDisabledForUser(nextUser?.uid || '');
-      loadLibrary();
-    });
+    const initSubscription = async () => {
+      try {
+        const { auth, authModule } = await ensureFirebaseClients();
 
-    return unsubscribe;
+        if (!isMounted) return;
+
+        await loadLibrary();
+
+        unsubscribe = authModule.onAuthStateChanged(auth, (nextUser) => {
+          firestoreDisabledRef.current = isFirestoreDisabledForUser(
+            nextUser?.uid || '',
+          );
+          loadLibrary();
+        });
+      } catch (error) {
+        console.error('[useLibrary] Auth observer setup failed:', error);
+        if (isMounted) {
+          setLibrary(readLocalLibrary());
+          setLoading(false);
+        }
+      }
+    };
+
+    initSubscription();
+
+    return () => {
+      isMounted = false;
+      unsubscribe();
+    };
   }, []);
 
   const addToLibrary = async (movieId) => {
-    const user = auth.currentUser;
     const id = Number(movieId);
-
     if (!Number.isFinite(id)) return;
+
+    const { auth, db, firestoreModule } = await ensureFirebaseClients();
+    const user = auth.currentUser;
 
     if (!user) throw createLoginRequiredError();
 
@@ -147,9 +204,14 @@ export function useLibrary() {
     }
 
     if (!firestoreDisabledRef.current) {
-      const userRef = doc(db, 'users', user.uid);
+      const userRef = firestoreModule.doc(db, 'users', user.uid);
+
       try {
-        await setDoc(userRef, { library: arrayUnion(id) }, { merge: true });
+        await firestoreModule.setDoc(
+          userRef,
+          { library: firestoreModule.arrayUnion(id) },
+          { merge: true },
+        );
       } catch (error) {
         if (shouldDisableFirestore(error)) {
           firestoreDisabledRef.current = true;
@@ -162,10 +224,11 @@ export function useLibrary() {
   };
 
   const removeFromLibrary = async (movieId) => {
-    const user = auth.currentUser;
     const id = Number(movieId);
-
     if (!Number.isFinite(id)) return;
+
+    const { auth, db, firestoreModule } = await ensureFirebaseClients();
+    const user = auth.currentUser;
 
     if (!user) throw createLoginRequiredError();
 
@@ -174,9 +237,14 @@ export function useLibrary() {
     setLibrary(next);
 
     if (!firestoreDisabledRef.current) {
-      const userRef = doc(db, 'users', user.uid);
+      const userRef = firestoreModule.doc(db, 'users', user.uid);
+
       try {
-        await setDoc(userRef, { library: arrayRemove(id) }, { merge: true });
+        await firestoreModule.setDoc(
+          userRef,
+          { library: firestoreModule.arrayRemove(id) },
+          { merge: true },
+        );
       } catch (error) {
         if (shouldDisableFirestore(error)) {
           firestoreDisabledRef.current = true;

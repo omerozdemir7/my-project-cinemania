@@ -1,7 +1,7 @@
 const API_KEY = '362ee522f1af2dedac989b8df9cfb4eb';
 const BASE_URL = 'https://api.themoviedb.org/3';
 const IMG_URL = 'https://image.tmdb.org/t/p/w500';
-const IMG_ORIGINAL_URL = 'https://image.tmdb.org/t/p/original';
+const IMG_BACKDROP_URL = 'https://image.tmdb.org/t/p/w1280';
 
 async function fetchFromAPI(endpoint, params = {}, lang = 'en-US') {
   const url = new URL(`${BASE_URL}${endpoint}`);
@@ -61,7 +61,7 @@ export function getImageUrl(path) {
 
 export function getOriginalImageUrl(path) {
   return path
-    ? `${IMG_ORIGINAL_URL}${path}`
+    ? `${IMG_BACKDROP_URL}${path}`
     : 'https://via.placeholder.com/1920x1080?text=No+Image';
 }
 

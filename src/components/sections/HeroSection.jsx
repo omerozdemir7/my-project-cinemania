@@ -3,40 +3,44 @@ import {
   fetchMovieDetails,
   fetchMovieVideos,
   getBackdropUrl,
+  getBackdropSrcSet,
 } from '../../utils/moviesApi';
 
 export function HeroSection({
   movieId,
+  movie: movieProp,
   onWatchTrailer,
   onMoreDetails,
   children,
 }) {
-  const [movie, setMovie] = useState(null);
-  const [backgroundImage, setBackgroundImage] = useState('');
+  const [movie, setMovie] = useState(movieProp || null);
 
   useEffect(() => {
-    if (movieId) {
-      loadMovie();
+    if (movieProp) {
+      setMovie(movieProp);
+      return;
     }
-  }, [movieId]);
 
-  const loadMovie = async () => {
-    const movieData = await fetchMovieDetails(movieId);
-    if (movieData) {
-      setMovie(movieData);
-      const bg = getBackdropUrl(
-        movieData.backdrop_path || movieData.poster_path,
-      );
-      setBackgroundImage(`
-        linear-gradient(to right, 
-          #111 0%, 
-          rgba(17, 17, 17, 1) 30%, 
-          rgba(17, 17, 17, 0.5) 50%, 
-          transparent 100%),
-        url('${bg}')
-      `);
+    if (!movieId) {
+      setMovie(null);
+      return;
     }
-  };
+
+    let ignore = false;
+
+    const loadMovie = async () => {
+      const movieData = await fetchMovieDetails(movieId);
+      if (!ignore) {
+        setMovie(movieData || null);
+      }
+    };
+
+    loadMovie();
+
+    return () => {
+      ignore = true;
+    };
+  }, [movieId, movieProp]);
 
   const handleWatchTrailer = async () => {
     if (!movie) return;
@@ -78,9 +82,33 @@ export function HeroSection({
     return starElements;
   };
 
+  const backdropPath = movie?.backdrop_path || movie?.poster_path;
+  const heroImageSrc = getBackdropUrl(backdropPath, 'w780');
+  const heroImageSrcSet = getBackdropSrcSet(backdropPath, ['w780', 'w1280']);
+
+  const renderHeroMedia = () => {
+    if (!backdropPath) return null;
+
+    return (
+      <div className="hero-media" aria-hidden="true">
+        <img
+          src={heroImageSrc}
+          srcSet={heroImageSrcSet || undefined}
+          sizes="100vw"
+          alt=""
+          className="hero-bg-image"
+          fetchPriority="high"
+          decoding="async"
+        />
+        <div className="hero-overlay"></div>
+      </div>
+    );
+  };
+
   if (children) {
     return (
-      <section className="hero-section" style={{ backgroundImage }}>
+      <section className="hero-section">
+        {renderHeroMedia()}
         <div className="container hero-container">
           <div className="hero-content">{children}</div>
         </div>
@@ -101,7 +129,8 @@ export function HeroSection({
   }
 
   return (
-    <section className="hero-section" style={{ backgroundImage }}>
+    <section className="hero-section">
+      {renderHeroMedia()}
       <div className="container hero-container">
         <div className="hero-content">
           <h1 className="hero-title">{movie.title}</h1>

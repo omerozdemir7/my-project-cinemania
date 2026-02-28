@@ -1,7 +1,42 @@
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 const BASE_URL = 'https://api.themoviedb.org/3';
-const IMG_URL = 'https://image.tmdb.org/t/p/w500';
-const IMG_ORIGINAL_URL = 'https://image.tmdb.org/t/p/original';
+const TMDB_IMAGE_BASE_URL = 'https://image.tmdb.org/t/p';
+const POSTER_PLACEHOLDER = 'https://via.placeholder.com/500x750?text=No+Poster';
+const BACKDROP_PLACEHOLDER =
+  'https://via.placeholder.com/1280x720?text=No+Image';
+const PROVIDER_PLACEHOLDER =
+  'https://via.placeholder.com/154x154?text=No+Logo';
+
+const TMDB_SIZE_WIDTHS = {
+  w45: 45,
+  w92: 92,
+  w154: 154,
+  w185: 185,
+  w300: 300,
+  w342: 342,
+  w500: 500,
+  w780: 780,
+  w1280: 1280,
+  original: 2000,
+};
+
+function buildTmdbImageUrl(path, size) {
+  if (!path) return '';
+  return `${TMDB_IMAGE_BASE_URL}/${size}${path}`;
+}
+
+function buildTmdbSrcSet(path, sizes) {
+  if (!path) return '';
+
+  return sizes
+    .map((size) => {
+      const width = TMDB_SIZE_WIDTHS[size];
+      if (!width) return null;
+      return `${buildTmdbImageUrl(path, size)} ${width}w`;
+    })
+    .filter(Boolean)
+    .join(', ');
+}
 
 async function fetchFromAPI(endpoint, params = {}, lang = 'en-US') {
   const url = new URL(`${BASE_URL}${endpoint}`);
@@ -53,20 +88,32 @@ export async function fetchMovieVideos(id) {
   return await fetchFromAPI(`/movie/${id}/videos`, {}, null);
 }
 
-export function getImageUrl(path) {
-  return path
-    ? `${IMG_URL}${path}`
-    : 'https://via.placeholder.com/500x750?text=No+Poster';
+export function getImageUrl(path, size = 'w500') {
+  return buildTmdbImageUrl(path, size) || POSTER_PLACEHOLDER;
+}
+
+export function getPosterSrcSet(path, sizes = ['w342', 'w500', 'w780']) {
+  return buildTmdbSrcSet(path, sizes);
 }
 
 export function getOriginalImageUrl(path) {
-  return path
-    ? `${IMG_ORIGINAL_URL}${path}`
-    : 'https://via.placeholder.com/1920x1080?text=No+Image';
+  return getBackdropUrl(path, 'w1280');
 }
 
-export function getBackdropUrl(path) {
-  return path ? `https://image.tmdb.org/t/p/w1280${path}` : '';
+export function getBackdropUrl(path, size = 'w1280') {
+  return buildTmdbImageUrl(path, size) || BACKDROP_PLACEHOLDER;
+}
+
+export function getBackdropSrcSet(path, sizes = ['w780', 'w1280']) {
+  return buildTmdbSrcSet(path, sizes);
+}
+
+export function getProviderLogoUrl(path, size = 'w154') {
+  return buildTmdbImageUrl(path, size) || PROVIDER_PLACEHOLDER;
+}
+
+export function getProviderLogoSrcSet(path, sizes = ['w92', 'w154', 'w300']) {
+  return buildTmdbSrcSet(path, sizes);
 }
 
 export async function fetchMovieProviders(id) {

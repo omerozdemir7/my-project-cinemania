@@ -7,7 +7,7 @@ import { searchMovies, fetchPopularMovies } from '../utils/moviesApi';
 
 export function CatalogPage({ onMovieClick, onWatchTrailer }) {
   const [loading, setLoading] = useState(true);
-  const [heroMovieId, setHeroMovieId] = useState(null);
+  const [heroMovie, setHeroMovie] = useState(null);
   const [movies, setMovies] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -39,7 +39,10 @@ export function CatalogPage({ onMovieClick, onWatchTrailer }) {
     if (data?.results?.length) {
       setMovies(data.results);
       setTotalPages(data.total_pages);
-      setHeroMovieId(data.results[0].id);
+      setHeroMovie(data.results[0]);
+    } else {
+      setMovies([]);
+      setHeroMovie(null);
     }
   };
 
@@ -59,13 +62,14 @@ export function CatalogPage({ onMovieClick, onWatchTrailer }) {
     if (!data?.results?.length) {
       setMovies([]);
       setTotalPages(1);
+      setHeroMovie(null);
       return;
     }
 
     setMovies(data.results);
     setTotalPages(Math.min(data.total_pages, 500));
     if (data.results[0]) {
-      setHeroMovieId(data.results[0].id);
+      setHeroMovie(data.results[0]);
     }
   };
 
@@ -87,11 +91,19 @@ export function CatalogPage({ onMovieClick, onWatchTrailer }) {
     if (data?.results?.length) {
       setMovies(data.results);
       setTotalPages(data.total_pages);
+      setHeroMovie(data.results[0]);
+    } else {
+      setMovies([]);
+      setHeroMovie(null);
     }
   };
 
   const handleCardClick = (movieId) => {
-    setHeroMovieId(movieId);
+    const selectedMovie = movies.find((movie) => movie.id === movieId);
+    if (selectedMovie) {
+      setHeroMovie(selectedMovie);
+    }
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -106,7 +118,7 @@ export function CatalogPage({ onMovieClick, onWatchTrailer }) {
       {loading && <Loader />}
 
       <HeroSection
-        movieId={heroMovieId}
+        movie={heroMovie}
         onWatchTrailer={onWatchTrailer}
         onMoreDetails={onMovieClick}
       />

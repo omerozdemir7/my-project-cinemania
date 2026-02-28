@@ -62,7 +62,7 @@ export function setupModal() {
 
         trData.flatrate.slice(0, 5).forEach((provider) => {
           const img = document.createElement('img');
-          img.src = `https://image.tmdb.org/t/p/original${provider.logo_path}`;
+          img.src = `https://image.tmdb.org/t/p/w154${provider.logo_path}`;
           img.alt = provider.provider_name;
           img.title = `Watch on ${provider.provider_name}`;
           img.classList.add('provider-logo');

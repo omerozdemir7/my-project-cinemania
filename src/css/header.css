@@ -207,6 +207,11 @@ input:checked + .slider .slider-circle-container {
 }
 
 @media (min-width: 769px) {
+  .logo img {
+    width: 56px;
+    height: 56px;
+  }
+
   .site-header {
     padding: 20px 0;
   }
