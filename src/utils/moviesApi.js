@@ -72,3 +72,11 @@ export function getBackdropUrl(path) {
 export async function fetchMovieProviders(id) {
   return await fetchFromAPI(`/movie/${id}/watch/providers`);
 }
+
+export async function fetchMovieCredits(id) {
+  return await fetchFromAPI(`/movie/${id}/credits`, {}, null);
+}
+
+export async function fetchMovieReviews(id, page = 1) {
+  return await fetchFromAPI(`/movie/${id}/reviews`, { page });
+}

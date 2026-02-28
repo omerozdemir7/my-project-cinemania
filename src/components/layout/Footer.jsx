@@ -23,7 +23,7 @@ export function Footer({ onTeamModalOpen }) {
   }, [onTeamModalOpen]);
 
   return (
-    <footer className="site-footer" translate="no">
+    <footer className="site-footer">
       <div className="container">
         <p>
           &copy; 2025 | All Rights Reserved | Developed with

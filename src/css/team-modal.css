@@ -7,6 +7,12 @@
   overflow-y: auto;
 }
 
+#team-modal-backdrop.team-modal-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
 .team-title {
   font-size: 28px;
   color: var(--primary-orange);

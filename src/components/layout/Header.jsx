@@ -116,7 +116,7 @@ export function Header({ onLoginClick }) {
   }, []);
 
   return (
-    <header className="site-header notranslate" translate="no">
+    <header className="site-header">
       <div className="container header-container">
         <Link to="/" className="logo" onClick={handleLogoClick}>
           <img src={logo} alt="Cinemania Logo" />

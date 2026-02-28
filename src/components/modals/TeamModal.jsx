@@ -27,14 +27,12 @@ export function TeamModal({ isOpen, onClose }) {
     }
   };
 
-  if (!isOpen) return null;
-
   return (
     <div
-      className="modal-backdrop"
+      className={`modal-backdrop ${isOpen ? '' : 'team-modal-hidden'}`}
       id="team-modal-backdrop"
       onClick={handleBackdropClick}
-      translate="no"
+      aria-hidden={!isOpen}
       role="dialog"
       aria-modal="true"
       aria-labelledby="team-modal-title"
@@ -80,6 +78,13 @@ export function TeamModal({ isOpen, onClose }) {
                 rel="noopener noreferrer"
               >
                 <i className="fab fa-linkedin"></i>
+              </a>
+              <a
+                href="https://www.instagram.com/cprookie"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <i className="fab fa-instagram"></i>
               </a>
             </div>
           </div>

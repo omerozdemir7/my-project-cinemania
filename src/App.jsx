@@ -1,23 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
 import { LoginModal } from './components/modals/LoginModal';
-import { MovieDetailsModal } from './components/modals/MovieDetailsModal';
 import { TrailerModal } from './components/modals/TrailerModal';
 import { TrailerErrorModal } from './components/modals/TrailerErrorModal';
 import { TeamModal } from './components/modals/TeamModal';
 import { HomePage } from './pages/HomePage';
 import { CatalogPage } from './pages/CatalogPage';
 import { LibraryPage } from './pages/LibraryPage';
+import { MovieDetailsPage } from './pages/MovieDetailsPage';
 
 function App() {
+  const navigate = useNavigate();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [isMovieModalOpen, setIsMovieModalOpen] = useState(false);
   const [isTrailerModalOpen, setIsTrailerModalOpen] = useState(false);
   const [isTrailerErrorModalOpen, setIsTrailerErrorModalOpen] = useState(false);
   const [isTeamModalOpen, setIsTeamModalOpen] = useState(false);
-  const [selectedMovieId, setSelectedMovieId] = useState(null);
   const [trailerVideoKey, setTrailerVideoKey] = useState(null);
 
   useEffect(() => {
@@ -130,8 +129,8 @@ function App() {
   }, []);
 
   const handleMovieClick = (movieId) => {
-    setSelectedMovieId(movieId);
-    setIsMovieModalOpen(true);
+    if (!movieId) return;
+    navigate(`/movie/${movieId}`);
   };
 
   const handleWatchTrailer = (videoKey) => {
@@ -144,74 +143,73 @@ function App() {
   };
 
   return (
-    <Router basename="/my-project-cinemania/">
-      <div className="App">
-        <Header onLoginClick={() => setIsLoginModalOpen(true)} />
+    <div className="App">
+      <Header onLoginClick={() => setIsLoginModalOpen(true)} />
 
-        <main>
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <HomePage
-                  onMovieClick={handleMovieClick}
-                  onWatchTrailer={handleWatchTrailer}
-                />
-              }
-            />
-            <Route
-              path="/catalog"
-              element={
-                <CatalogPage
-                  onMovieClick={handleMovieClick}
-                  onWatchTrailer={handleWatchTrailer}
-                />
-              }
-            />
-            <Route
-              path="/library"
-              element={
-                <LibraryPage
-                  onMovieClick={handleMovieClick}
-                  onWatchTrailer={handleWatchTrailer}
-                />
-              }
-            />
-          </Routes>
-        </main>
+      <main>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <HomePage
+                onMovieClick={handleMovieClick}
+                onWatchTrailer={handleWatchTrailer}
+              />
+            }
+          />
+          <Route
+            path="/catalog"
+            element={
+              <CatalogPage
+                onMovieClick={handleMovieClick}
+                onWatchTrailer={handleWatchTrailer}
+              />
+            }
+          />
+          <Route
+            path="/library"
+            element={
+              <LibraryPage
+                onMovieClick={handleMovieClick}
+                onWatchTrailer={handleWatchTrailer}
+              />
+            }
+          />
+          <Route
+            path="/movie/:movieId"
+            element={
+              <MovieDetailsPage
+                onWatchTrailer={handleWatchTrailer}
+                onRequireLogin={() => setIsLoginModalOpen(true)}
+              />
+            }
+          />
+        </Routes>
+      </main>
 
-        <Footer onTeamModalOpen={() => setIsTeamModalOpen(true)} />
+      <Footer onTeamModalOpen={() => setIsTeamModalOpen(true)} />
 
-        {}
-        <LoginModal
-          isOpen={isLoginModalOpen}
-          onClose={() => setIsLoginModalOpen(false)}
-        />
+      <LoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+      />
 
-        <MovieDetailsModal
-          isOpen={isMovieModalOpen}
-          onClose={() => setIsMovieModalOpen(false)}
-          movieId={selectedMovieId}
-          onRequireLogin={() => setIsLoginModalOpen(true)}
-        />
+      <TrailerModal
+        isOpen={isTrailerModalOpen}
+        onClose={() => setIsTrailerModalOpen(false)}
+        videoKey={trailerVideoKey}
+      />
 
-        <TrailerModal
-          isOpen={isTrailerModalOpen}
-          onClose={() => setIsTrailerModalOpen(false)}
-          videoKey={trailerVideoKey}
-        />
+      <TrailerErrorModal
+        isOpen={isTrailerErrorModalOpen}
+        onClose={() => setIsTrailerErrorModalOpen(false)}
+      />
 
-        <TrailerErrorModal
-          isOpen={isTrailerErrorModalOpen}
-          onClose={() => setIsTrailerErrorModalOpen(false)}
-        />
-
-        <TeamModal
-          isOpen={isTeamModalOpen}
-          onClose={() => setIsTeamModalOpen(false)}
-        />
-      </div>
-    </Router>
+      <TeamModal
+        isOpen={isTeamModalOpen}
+        onClose={() => setIsTeamModalOpen(false)}
+      />
+    </div>
   );
 }
 

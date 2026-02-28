@@ -1,0 +1,382 @@
+.movie-details-page {
+  background: var(--primary-black);
+  color: var(--primary-white);
+  padding-bottom: 64px;
+}
+
+.movie-details-hero {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: 28px 0 40px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.movie-details-hero-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.movie-details-back-btn {
+  align-self: flex-start;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: #fff;
+  background: rgba(0, 0, 0, 0.35);
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.movie-details-back-btn:hover {
+  border-color: var(--primary-orange);
+}
+
+.movie-details-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(220px, 280px) 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+.movie-details-poster-wrap {
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5);
+}
+
+.movie-details-poster {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+.movie-details-title {
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  line-height: 1.1;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.movie-details-subtitle {
+  color: #d8d8d8;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+.movie-details-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.movie-badge {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 13px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.movie-details-overview {
+  color: #f3f3f3;
+  line-height: 1.7;
+  margin-bottom: 22px;
+  max-width: 78ch;
+}
+
+.movie-details-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 26px;
+}
+
+.movie-details-trailer-btn {
+  border-radius: 20px;
+  padding: 12px 20px;
+}
+
+.movie-details-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.movie-details-meta-grid div {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.movie-details-meta-grid span {
+  display: block;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  opacity: 0.75;
+  margin-bottom: 6px;
+}
+
+.movie-details-meta-grid strong {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.movie-details-section {
+  padding: 44px 0 0;
+}
+
+.movie-details-section-title {
+  font-size: 26px;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+
+.movie-details-fallback {
+  color: var(--text-grey);
+}
+
+.movie-cast-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 14px;
+}
+
+.cast-card {
+  border: 1px solid var(--header-border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #141414;
+}
+
+.cast-card img {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  display: block;
+}
+
+.cast-card-body {
+  padding: 10px;
+}
+
+.cast-card-body h3 {
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.cast-card-body p {
+  font-size: 12px;
+  color: var(--text-grey);
+}
+
+.provider-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.provider-card {
+  border: 1px solid var(--header-border);
+  border-radius: 12px;
+  background: #141414;
+  color: #fff;
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  text-align: center;
+}
+
+.provider-card:hover {
+  border-color: var(--primary-orange);
+}
+
+.provider-card img {
+  width: 64px;
+  height: 64px;
+  border-radius: 10px;
+}
+
+.provider-card span {
+  font-size: 12px;
+}
+
+.movie-watch-link {
+  margin-top: 14px;
+  display: inline-block;
+}
+
+.review-list,
+.comment-list {
+  display: grid;
+  gap: 12px;
+}
+
+.review-card,
+.comment-card {
+  border: 1px solid var(--header-border);
+  border-radius: 12px;
+  padding: 14px;
+  background: #141414;
+}
+
+.review-card header,
+.comment-card header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.review-card header h3,
+.comment-card header h3 {
+  font-size: 14px;
+}
+
+.review-card time,
+.comment-card time {
+  font-size: 12px;
+  color: var(--text-grey);
+}
+
+.review-card p,
+.comment-card p {
+  line-height: 1.6;
+  color: #f1f1f1;
+  white-space: pre-wrap;
+}
+
+.comment-form {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.comment-form label {
+  font-weight: 600;
+}
+
+.comment-form textarea {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--header-border);
+  background: #111;
+  color: #fff;
+  padding: 12px;
+  resize: vertical;
+}
+
+.comment-form textarea:focus {
+  outline: none;
+  border-color: var(--primary-orange);
+}
+
+.comment-error {
+  color: #ff7b7b;
+  font-size: 13px;
+}
+
+.movie-details-empty {
+  min-height: 64vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.movie-details-empty h1 {
+  margin-bottom: 16px;
+}
+
+@media (max-width: 900px) {
+  .movie-details-hero-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .movie-details-poster-wrap {
+    max-width: 280px;
+    margin: 0 auto;
+  }
+
+  .movie-details-main {
+    text-align: center;
+  }
+
+  .movie-details-badges,
+  .movie-details-actions {
+    justify-content: center;
+  }
+
+  .movie-details-meta-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .movie-details-title {
+    font-size: 1.8rem;
+  }
+
+  .movie-details-section-title {
+    font-size: 22px;
+  }
+
+  .movie-details-actions > * {
+    width: 100%;
+  }
+}
+
+body.light-mode .movie-details-page {
+  background: var(--light-bg);
+  color: var(--light-text);
+}
+
+body.light-mode .movie-details-overview,
+body.light-mode .review-card p,
+body.light-mode .comment-card p {
+  color: #333;
+}
+
+body.light-mode .cast-card,
+body.light-mode .provider-card,
+body.light-mode .review-card,
+body.light-mode .comment-card {
+  background: #fff;
+  border-color: var(--light-border);
+  color: var(--light-text);
+}
+
+body.light-mode .movie-details-meta-grid div {
+  background: #fff;
+  border-color: var(--light-border);
+}
+
+body.light-mode .movie-details-back-btn {
+  color: #111;
+  background: rgba(255, 255, 255, 0.75);
+  border-color: rgba(17, 17, 17, 0.3);
+}
+
+body.light-mode .comment-form textarea {
+  background: #fff;
+  border-color: var(--light-border);
+  color: #222;
+}
+
+body.light-mode .movie-badge {
+  color: #111;
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(17, 17, 17, 0.2);
+}
